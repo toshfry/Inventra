@@ -1,0 +1,126 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller (keep app packaging spec in source control — see allow rule below)
+*.manifest
+*.spec
+PalayKita_Build*/
+Inventra_Build*/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Flask / instance data
+instance/
+.webassets-cache
+
+# Sphinx documentation
+docs/_build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Editors
+.spyderproject
+.spyproject
+.ropeproject
+.vscode/
+.idea/
+
+# Type checkers / linters
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+
+# Cython debug symbols
+cython_debug/
+
+# PyPI configuration file
+.pypirc
+
+# Cursor (AI editor) ignore files
+.cursorignore
+.cursorindexingignore
+
+# ── Public portfolio cleanup ────────────────────────────────────────────────
+# Never publish real secrets, license files, databases, reports, or backups.
+.env.*
+!.env.example
+*.key
+*.pem
+license.json
+licenses/
+generated_licenses/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+data/
+runtime/
+logs/
+exports/
+backups/
+*.xlsx
+*.xls
+*.csv
+# Excel lock/temp files
+~$*
+
+# Keep the app packaging spec in source control.
+!inventra.spec

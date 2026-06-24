@@ -1,0 +1,3761 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Inventra v2.1.14</title>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --brand: #1a6b3c;
+      --brand-light: #2D8C5A;
+      --brand-dark: #124d2b;
+      --navy: #1D3461;
+      --accent: #f59e0b;
+      --danger: #dc2626;
+      --bg: #f4f6f9;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .1);
+      --shadow-lg: 0 10px 25px rgba(0, 0, 0, .15);
+      --radius: 10px;
+      --tap: 48px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: var(--bg);
+      font-family: var(--font);
+      color: var(--text);
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      font-family: inherit;
+    }
+
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      background: var(--navy);
+      color: #fff;
+      padding: 0 16px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+      z-index: 10;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .logo img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .logo .logo-word {
+      color: #fff;
+    }
+
+    .logo .logo-accent {
+      color: var(--accent);
+    }
+
+    #user-badge {
+      font-size: 12px;
+      opacity: .8;
+    }
+
+    #btn-logout {
+      background: rgba(255, 255, 255, .15);
+      border: none;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    nav {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .nav-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 4px 6px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 10px;
+      gap: 2px;
+      min-height: 58px;
+      transition: color .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-btn svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .nav-btn.active {
+      color: var(--navy);
+    }
+
+    main {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .screen {
+      display: none;
+      padding: 16px;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card+.card {
+      margin-top: 12px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .metric {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .metric-value.danger {
+      color: var(--danger);
+    }
+
+    .metric-value.green {
+      color: var(--brand-light);
+    }
+
+    .metric-value.navy {
+      color: var(--navy);
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      height: var(--tap);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 0 14px;
+      font-size: 15px;
+      background: var(--surface);
+      outline: none;
+    }
+
+    .search-bar input:focus {
+      border-color: var(--navy);
+    }
+
+    .search-bar select {
+      height: var(--tap);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 0 8px;
+      font-size: 14px;
+      background: var(--surface);
+      outline: none;
+      max-width: 130px;
+    }
+
+    .tbl-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead tr {
+      background: #f8fafc;
+      border-bottom: 2px solid var(--border);
+    }
+
+    th {
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr.selected-row td {
+      background: #eff6ff;
+    }
+
+    tr.clickable:active td {
+      background: #f8fafc;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-cat {
+      background: transparent !important;
+      color: inherit;
+      padding: 0;
+      border-radius: 0;
+      font-weight: 800;
+    }
+
+    .part-category-text {
+      display: inline-block;
+      font-weight: 800;
+      background: transparent !important;
+      border-radius: 0;
+      padding: 0;
+    }
+
+    .badge-low {
+      background: #fef2f2;
+      color: var(--danger);
+    }
+
+    .badge-ok {
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: var(--tap);
+      padding: 0 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:active {
+      opacity: .75;
+    }
+
+    .btn-primary {
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .btn-green {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-warning {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-sm {
+      height: 34px;
+      padding: 0 12px;
+      font-size: 13px;
+    }
+
+    .btn-full {
+      width: 100%;
+    }
+
+    .fab {
+      position: fixed;
+      right: 18px;
+      bottom: 74px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 100;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-bg.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 16px 16px 0 0;
+      width: 100%;
+      max-height: 92vh;
+      overflow-y: auto;
+      padding: 20px 16px 32px;
+      box-shadow: var(--shadow-lg);
+      animation: slide-up .22s ease-out;
+    }
+
+    @media(min-width:600px) {
+      .modal-bg {
+        align-items: center;
+      }
+
+      .modal {
+        border-radius: 16px;
+        max-width: 500px;
+      }
+    }
+
+    @keyframes slide-up {
+      from {
+        transform: translateY(80px);
+        opacity: 0
+      }
+
+      to {
+        transform: none;
+        opacity: 1
+      }
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      height: var(--tap);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 0 14px;
+      font-size: 15px;
+      background: var(--surface);
+      outline: none;
+      color: var(--text);
+    }
+
+    .field textarea {
+      height: 80px;
+      padding: 10px 14px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--navy);
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .color-picker-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .color-swatch {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    input[type=color] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1e293b;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transition: all .25s;
+      pointer-events: none;
+      z-index: 200;
+      white-space: nowrap;
+      max-width: 90vw;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #toast.error {
+      background: var(--danger);
+    }
+
+    #toast.warning {
+      background: var(--accent);
+      color: #1e293b;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 10px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .activity-icon.in {
+      background: #dcfce7;
+    }
+
+    .activity-icon.out {
+      background: #fee2e2;
+    }
+
+    .activity-icon.other {
+      background: #f1f5f9;
+    }
+
+    .activity-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .activity-part {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .activity-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .cat-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+    }
+
+    .cat-item:last-child {
+      border-bottom: none;
+    }
+
+    .cat-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .cat-name {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .cat-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    #login-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #203B68;
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    #login-screen.open {
+      display: flex;
+    }
+
+    #login-screen::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background:
+        radial-gradient(ellipse at center, rgba(37, 73, 120, .82) 0%, rgba(35, 69, 113, .45) 24%, rgba(32, 59, 104, .08) 48%, transparent 66%),
+        linear-gradient(180deg, rgba(255, 255, 255, .03), rgba(0, 0, 0, .03));
+      pointer-events: none;
+    }
+
+    #login-screen::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .08;
+      background-image: radial-gradient(rgba(255, 255, 255, .55) .7px, transparent .7px);
+      background-size: 18px 18px;
+      pointer-events: none;
+    }
+
+    .login-box {
+      position: relative;
+      z-index: 1;
+      background: #FFFFFF;
+      border-radius: 22px;
+      padding: 36px 45px 30px;
+      width: 100%;
+      max-width: 428px;
+      box-shadow: none;
+      border: 0;
+    }
+
+    .login-brand {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      min-height: 64px;
+      margin-bottom: 4px;
+    }
+
+    .login-logo {
+      width: 58px;
+      height: 58px;
+      flex: 0 0 58px;
+    }
+
+    /* Equal-width spacer on the right balances the logo so the "Inventra"
+       wordmark stays horizontally centered. */
+    .login-spacer {
+      flex: 0 0 58px;
+    }
+
+    .login-wordmark {
+      font-size: 23px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -.8px;
+      color: #112A4D;
+    }
+
+    .login-wordmark span {
+      color: #F59E0B;
+    }
+
+    .login-sub {
+      text-align: center;
+      color: #64748B;
+      font-size: 10px;
+      margin-bottom: 29px;
+    }
+
+    .login-field {
+      margin-bottom: 18px;
+    }
+
+    .login-field label {
+      display: block;
+      font-size: 9px;
+      font-weight: 800;
+      color: #3F5575;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: .55px;
+    }
+
+    .login-field input {
+      width: 100%;
+      height: 55px;
+      border: 1.15px solid #DCE4EF;
+      border-radius: 12px;
+      padding: 0 18px;
+      font-size: 15px;
+      background: #FFFFFF;
+      outline: none;
+      color: #1D2D44;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .login-field input:focus {
+      border-color: #AFC0D6;
+      box-shadow: 0 0 0 3px rgba(175, 192, 214, .22);
+    }
+
+    .login-err {
+      min-height: 18px;
+      color: #DC2626;
+      font-size: 11px;
+      margin: -7px 0 7px;
+      text-align: left;
+    }
+
+    .login-submit {
+      height: 56px;
+      border-radius: 12px;
+      background: #15345F;
+      color: #fff;
+      border: none;
+      width: 100%;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background .15s, transform .12s, opacity .15s;
+    }
+
+    .login-submit:hover {
+      background: #1C4174;
+    }
+
+    .login-submit:active {
+      transform: translateY(1px);
+      opacity: .9;
+    }
+
+    .login-submit.success {
+      background: #16A34A;
+    }
+
+    .login-footer {
+      margin-top: 14px;
+      padding-top: 14px;
+      position: relative;
+    }
+
+    .login-footer::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(158px, 55%);
+      height: 1px;
+      background: #E7ECF4;
+    }
+
+    .login-footer-pill {
+      min-height: 28px;
+      border: 1px solid #E5EBF3;
+      background: #F8FAFC;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 6px 9px;
+      color: #64748B;
+      font-size: 8px;
+      line-height: 1;
+      white-space: nowrap;
+      text-align: center;
+      width: 100%;
+      max-width: 318px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .login-footer-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #F59E0B;
+      flex: 0 0 6px;
+    }
+
+    .login-footer-copy {
+      min-width: 0;
+      flex: 0 1 auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .login-footer-sep {
+      height: 11px;
+      width: 1px;
+      background: #DCE4EF;
+      flex: 0 0 1px;
+    }
+
+    .login-footer-user {
+      color: #112A4D;
+      font-weight: 800;
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    @media(max-width:430px) {
+      .login-box {
+        padding-left: 28px;
+        padding-right: 28px;
+      }
+
+      .login-footer-pill {
+        font-size: 9px;
+        gap: 4px;
+        padding-left: 7px;
+        padding-right: 7px;
+      }
+    }
+
+    @media(max-width:360px) {
+      .login-footer-pill {
+        font-size: 6.6px;
+        gap: 3px;
+        padding-left: 6px;
+        padding-right: 6px;
+      }
+    }
+
+
+    .report-card-row {
+      padding: 14px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .report-card-row:last-child {
+      border-bottom: none;
+    }
+
+    .report-file-name {
+      font-weight: 800;
+      font-size: 13px;
+      line-height: 1.25;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      color: var(--text);
+    }
+
+    .report-file-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .report-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .report-actions .btn {
+      flex: 1 1 110px;
+      height: 38px;
+      text-decoration: none;
+    }
+
+    .report-date-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media(max-width:430px) {
+      .report-date-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .report-actions .btn {
+        flex-basis: 100%;
+      }
+    }
+
+    .spinner {
+      text-align: center;
+      padding: 32px;
+      color: var(--text-muted);
+    }
+
+    .stock-badge {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .stock-badge.low {
+      color: var(--danger);
+    }
+
+    .stock-badge.ok {
+      color: var(--brand-light);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tab-btn {
+      white-space: nowrap;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: none;
+      background: var(--border);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-muted);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab-btn.active {
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .txn-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .sel-bar {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .sel-bar.show {
+      display: flex;
+    }
+
+    .sel-bar-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    @media(min-width:768px) {
+      nav {
+        justify-content: center;
+      }
+
+      .nav-btn {
+        max-width: 100px;
+      }
+
+      .screen {
+        max-width: 960px;
+        margin: 0 auto;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .pos-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* ── POS ── */
+    .pos-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .pos-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+
+    .pos-result {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 78px 64px;
+      align-items: center;
+      padding: 10px 6px;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+    }
+
+    .pos-result:active,
+    .pos-result:hover {
+      background: var(--bg);
+    }
+
+    .pos-result-name {
+      min-width: 0;
+    }
+
+    .pos-result-name b {
+      display: block;
+      font-size: 13px;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .pos-result .meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      overflow-wrap: anywhere;
+    }
+
+    .pos-result-price {
+      text-align: right;
+      white-space: nowrap;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .pos-add-btn {
+      height: 32px;
+      border: none;
+      border-radius: 7px;
+      background: var(--navy);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .pos-add-btn:disabled {
+      background: var(--border);
+      color: var(--text-light);
+      cursor: not-allowed;
+    }
+
+    .pos-result .oos {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .pos-results {
+      max-height: 46vh;
+      overflow-y: auto;
+    }
+
+    .cart-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 80px 70px 78px 28px;
+      align-items: center;
+      gap: 4px;
+      min-height: 36px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #pos-cart {
+      border-top: 44px solid var(--navy);
+      border-radius: 10px 10px 0 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #pos-cart::before {
+      content: "Product";
+      position: absolute;
+      top: -32px;
+      left: 12px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    #pos-cart::after {
+      content: "Unit Price      Qty      Subtotal";
+      position: absolute;
+      top: -32px;
+      right: 46px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: pre;
+    }
+
+    .cart-row .ci-name {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .cart-row .ci-name b {
+      display: block;
+      font-size: 12px;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .cart-row .ci-name span {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .cart-row .qtybox {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .cart-row .qtybox button {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .cart-row .qtybox span {
+      min-width: 20px;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .cart-row .unit {
+      text-align: right;
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .cart-row .lt {
+      text-align: right;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .cart-row .rm {
+      width: 26px;
+      height: 24px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-light);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .cart-row .rm:hover {
+      background: #fbeaea;
+      color: var(--danger);
+      border-color: #fbeaea;
+    }
+
+    /* Sale-level discount control */
+    .pos-disc-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pos-disc-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      flex: 1;
+    }
+
+    .seg {
+      display: inline-flex;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .seg button {
+      border: none;
+      background: var(--surface);
+      color: var(--text-muted);
+      padding: 0 12px;
+      height: 36px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .seg button.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    #pos-disc-value {
+      width: 96px;
+      height: 36px;
+      text-align: right;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 0 10px;
+      font-size: 14px;
+    }
+
+    #pos-disc-value.invalid {
+      border-color: var(--danger);
+      background: #fff7f7;
+    }
+
+    .pos-fee-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .pos-fee-row select {
+      flex: 1;
+      min-width: 0;
+      height: 36px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 0 10px;
+      font-size: 14px;
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    #pos-fee-amt {
+      width: 96px;
+      height: 36px;
+      text-align: right;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 0 10px;
+      font-size: 14px;
+    }
+
+    .pos-fee-row .btn {
+      height: 36px;
+      white-space: nowrap;
+    }
+
+    .fee-add {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) 164px auto;
+      gap: 12px;
+      align-items: end;
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+
+    .fee-panel {
+      padding: 20px 22px 22px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .fee-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 2px;
+    }
+
+    .fee-title {
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    .fee-help {
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.45;
+      max-width: 620px;
+      margin-top: 4px;
+    }
+
+    .fee-count {
+      flex: 0 0 auto;
+      background: #e7eef9;
+      color: var(--navy);
+      border: 1px solid #d7e2f3;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .fee-add .field {
+      margin-bottom: 0;
+      width: auto !important;
+    }
+
+    .fee-add .btn {
+      height: 48px;
+      padding: 0 18px;
+      border-radius: 9px;
+    }
+
+    .fee-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .fee-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, .02);
+    }
+
+    .fee-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: #e7eef9;
+      color: var(--navy);
+      font-weight: 900;
+      flex: 0 0 34px;
+    }
+
+    .fee-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .fee-name {
+      font-weight: 600;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .fee-sub {
+      color: var(--text-muted);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    .fee-amt {
+      background: #fff3e6;
+      color: #b45309;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .fee-delete,
+    .fee-item .btn-danger {
+      width: 38px;
+      height: 38px;
+      border: 1px solid #fee2e2;
+      background: #fff7f7;
+      color: var(--danger);
+      border-radius: 9px;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      flex: 0 0 38px;
+      padding: 0;
+    }
+
+    .fee-delete:hover,
+    .fee-item .btn-danger:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .fee-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 14px;
+    }
+
+    .fee-empty {
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 24px 16px;
+      text-align: center;
+      color: var(--text-muted);
+      background: #fbfdff;
+    }
+
+    .fee-empty b {
+      display: block;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    @media(max-width:720px) {
+      .fee-add {
+        grid-template-columns: 1fr;
+      }
+
+      .fee-add .btn {
+        width: 100%;
+      }
+    }
+
+    @media(max-width:430px) {
+      .fee-panel {
+        padding: 16px;
+      }
+
+      .fee-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .fee-count {
+        width: fit-content;
+      }
+
+      .fee-item {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .fee-amt {
+        margin-left: 0;
+      }
+    }
+
+    .about-card {
+      text-align: center;
+      padding: 30px 26px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .about-logo {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 12px;
+      display: block;
+    }
+
+    .about-name {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -.5px;
+    }
+
+    .about-name .accent {
+      color: var(--accent);
+    }
+
+    .about-tag {
+      color: var(--text-muted);
+      margin: 4px 0 12px;
+    }
+
+    .about-ver {
+      display: inline-block;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 22px;
+    }
+
+    .about-specs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      text-align: left;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+
+    .about-specs .spec {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 8px 12px;
+      background: var(--bg);
+      border-radius: 9px;
+    }
+
+    .about-specs .spec span {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      color: var(--text-muted);
+    }
+
+    .about-specs .spec b {
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .about-foot {
+      border-top: 1px solid var(--border);
+      margin-top: 22px;
+      padding-top: 16px;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 540px) {
+      .about-specs {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    #pos-complete {
+      background: var(--navy);
+      color: #fff;
+    }
+
+    #pos-complete:disabled {
+      background: var(--text-light);
+      cursor: not-allowed;
+      opacity: .85;
+    }
+
+    .totals .trow {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 2px;
+      font-size: 13px;
+    }
+
+    .totals .trow.muted span {
+      color: var(--text-muted);
+    }
+
+    .totals .trow.disc span:last-child {
+      color: var(--accent);
+    }
+
+    .totals .trow.grand {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      border-top: 1.5px solid var(--border);
+      margin-top: 5px;
+      padding-top: 8px;
+    }
+
+    .change-due {
+      text-align: right;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--brand-light);
+      margin: 8px 2px;
+    }
+
+    #pos-complete:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="login-screen" class="open">
+    <div class="login-box">
+      <div class="login-brand">
+        <img class="login-logo" src="/logo.png" alt="Inventra">
+        <div class="login-wordmark">Invent<span>ra</span></div>
+        <span class="login-spacer" aria-hidden="true"></span>
+      </div>
+      <div class="login-sub">Automotive Inventory & Sales System</div>
+
+      <div class="login-field">
+        <label>Username</label>
+        <input id="login-user" type="text" autocomplete="username" value="admin" placeholder="admin">
+      </div>
+      <div class="login-field" style="margin-bottom:11px">
+        <label>Password</label>
+        <input id="login-pass" type="password" autocomplete="current-password" placeholder="••••••••">
+      </div>
+
+      <div class="login-err" id="login-err"></div>
+      <button class="login-submit" id="login-submit" onclick="doLogin()">Sign In</button>
+
+      <div class="login-footer">
+        <div class="login-footer-pill">
+          <span class="login-footer-dot"></span>
+          <span class="login-footer-copy">© 2026 Inventra Automotive Systems</span>
+          <span class="login-footer-sep"></span>
+          <span class="login-footer-user">@toshfry</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="app" style="display:none">
+    <header>
+      <div class="header-left">
+        <div class="logo">
+          <img src="/static/logo_navbar_nav.png" alt="">
+          <span class="logo-word">Invent<span class="logo-accent">ra</span></span>
+        </div>
+        <div id="user-badge"></div>
+      </div>
+      <button id="btn-logout" onclick="doLogout()">Sign out</button>
+    </header>
+    <main id="main-content">
+
+      <!-- Dashboard -->
+      <div class="screen active" id="screen-dashboard">
+        <div class="section-title">Dashboard</div>
+        <div class="metrics" id="dash-metrics">
+          <div class="spinner">Loading…</div>
+        </div>
+        <div class="section-title" style="margin-top:4px">Low Stock Alerts</div>
+        <div class="card" id="dash-low-stock"></div>
+        <div class="section-title" style="margin-top:14px">Recent Activity</div>
+        <div class="card" id="dash-activity"></div>
+      </div>
+
+      <!-- Parts -->
+      <div class="screen" id="screen-parts">
+        <div class="section-title">Parts Library</div>
+        <div class="search-bar">
+          <input id="parts-search" type="search" placeholder="Search parts…" oninput="filterParts()">
+          <select id="parts-cat-filter" onchange="filterParts()">
+            <option value="">All categories</option>
+          </select>
+        </div>
+        <div class="card">
+          <div class="tbl-wrap" id="parts-table">
+            <div class="spinner">Loading…</div>
+          </div>
+        </div>
+        <button class="fab" onclick="openPartModal()">+</button>
+      </div>
+
+      <!-- Stock -->
+      <div class="screen" id="screen-stock">
+        <div class="seg-toggle" style="display:flex;gap:8px;padding:12px 0">
+          <button id="stock-tab-in" class="btn btn-sm btn-primary" onclick="stockTab('in')">↓ Stock In</button>
+          <button id="stock-tab-out" class="btn btn-sm btn-secondary" onclick="stockTab('out')">↑ Stock Out</button>
+        </div>
+        <div id="stock-in-panel">
+          <div class="section-title">Stock In
+            <button class="btn btn-green btn-sm" onclick="openStockInModal()">↓ Receive</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+            <span style="font-size:12px;color:var(--text-muted)">Date</span>
+            <input id="si-date" type="date"
+              style="padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px">
+            <button class="btn btn-sm btn-secondary" onclick="siAll()">All</button>
+            <button class="btn btn-sm btn-secondary" onclick="siToday()">Today</button>
+            <button class="btn btn-sm btn-primary" onclick="loadStockIn()">Apply</button>
+          </div>
+          <div class="sel-bar" id="si-sel-bar">
+            <span id="si-sel-label">1 transaction selected</span>
+            <div class="sel-bar-btns">
+              <button class="btn btn-warning btn-sm" onclick="modifySelectedStockIn()">✎ Modify</button>
+              <button class="btn btn-danger btn-sm" onclick="cancelSelectedStockIn()">✕ Cancel Txn</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="tbl-wrap" id="stockin-table">
+              <div class="spinner">Loading…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stock Out -->
+        <div id="stock-out-panel" style="display:none">
+          <div class="section-title">Stock Out
+            <button class="btn btn-danger btn-sm" onclick="openStockOutModal()">↑ Issue</button>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+            <span style="font-size:12px;color:var(--text-muted)">Date</span>
+            <input id="so-date" type="date"
+              style="padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px">
+            <button class="btn btn-sm btn-secondary" onclick="soAll()">All</button>
+            <button class="btn btn-sm btn-secondary" onclick="soToday()">Today</button>
+            <button class="btn btn-sm btn-primary" onclick="loadStockOut()">Apply</button>
+          </div>
+          <div class="sel-bar" id="so-sel-bar">
+            <span id="so-sel-label">1 transaction selected</span>
+            <div class="sel-bar-btns">
+              <button class="btn btn-warning btn-sm" onclick="modifySelectedStockOut()">✎ Modify</button>
+              <button class="btn btn-danger btn-sm" onclick="cancelSelectedStockOut()">✕ Cancel Txn</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="tbl-wrap" id="stockout-table">
+              <div class="spinner">Loading…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screen" id="screen-returns">
+        <div class="section-title">Returns
+          <span style="display:flex;gap:8px">
+            <button class="btn btn-sm btn-primary" onclick="openReturnPick('issue')">↩ Return from Sale</button>
+            <button class="btn btn-sm btn-secondary" onclick="openReturnPick('part')">+ New Return</button>
+          </span>
+        </div>
+        <div class="card" id="returns-table">
+          <div class="spinner">Loading…</div>
+        </div>
+      </div>
+
+      <!-- POS -->
+      <div class="screen" id="screen-pos">
+        <div class="section-title">POS
+          <button class="btn btn-secondary btn-sm" onclick="openRecentSales()">🧾 Sales History</button>
+        </div>
+        <div class="pos-grid">
+          <div class="pos-panel">
+            <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px">PRODUCTS</div>
+            <div class="search-bar" style="margin-bottom:8px;gap:8px">
+              <input id="pos-search" type="text" placeholder="Search by SKU or name…" oninput="posSearch()">
+              <select id="pos-cat" onchange="posSearch()" style="max-width:150px">
+                <option value="">All Categories</option>
+              </select>
+            </div>
+            <div class="pos-results" id="pos-results">
+              <div class="spinner">Loading…</div>
+            </div>
+          </div>
+          <div class="pos-panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:11px;font-weight:700;color:var(--text-muted)">CART</span>
+              <button class="btn btn-secondary btn-sm" onclick="clearCart()">Clear</button>
+            </div>
+            <div id="pos-cart"></div>
+
+            <div class="pos-disc-row">
+              <span class="pos-disc-label">Discount</span>
+              <div class="seg" id="pos-disc-type">
+                <button type="button" class="active" data-type="amount" onclick="setDiscType('amount')">₱</button>
+                <button type="button" data-type="percent" onclick="setDiscType('percent')">%</button>
+              </div>
+              <input id="pos-disc-value" type="number" min="0" step="0.01" value="0" inputmode="decimal"
+                oninput="recomputeTotals()">
+            </div>
+
+            <div class="pos-fee-row">
+              <span class="pos-disc-label" style="flex:none;width:54px">Fee</span>
+              <select id="pos-fee-type" onchange="onFeeTypeChange()"></select>
+              <input id="pos-fee-amt" type="number" min="0" step="0.01" value="0.00" inputmode="decimal">
+              <button type="button" class="btn btn-primary" onclick="addFee()">Add</button>
+            </div>
+
+            <div class="totals" id="pos-totals" style="margin-top:6px"></div>
+            <div class="field" style="margin-top:10px">
+              <label>Payment Method</label>
+              <select id="pos-pay" onchange="recomputeTotals()">
+                <option>Cash</option>
+                <option>GCash</option>
+                <option>Card</option>
+                <option>Bank Transfer</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field" style="margin-top:8px">
+              <label>Amount Received</label>
+              <input id="pos-received" type="number" step="0.01" min="0" value="0" inputmode="decimal"
+                oninput="updateChange()">
+            </div>
+            <div class="change-due" id="pos-change">Change Due: ₱0.00</div>
+            <div id="pos-err" style="color:var(--danger);font-size:12px;min-height:16px"></div>
+            <button class="btn btn-green btn-full" id="pos-complete" onclick="completeSale()">✓ Complete Sale</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="screen" id="screen-settings">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="settingsTab('categories',this)">Categories</button>
+          <button class="tab-btn" onclick="settingsTab('users',this)">Users</button>
+          <button class="tab-btn" onclick="settingsTab('suppliers',this)">Suppliers</button>
+          <button class="tab-btn" onclick="settingsTab('fees',this)">Fees</button>
+          <button class="tab-btn" onclick="settingsTab('reports',this)">Reports</button>
+          <button class="tab-btn" onclick="settingsTab('about',this)">About</button>
+        </div>
+        <div id="tab-categories">
+          <div class="section-title">Categories
+            <button class="btn btn-primary btn-sm" id="btn-add-cat" onclick="openCatModal()">+ Add</button>
+          </div>
+          <div class="card cat-list" id="cat-list">
+            <div class="spinner">Loading…</div>
+          </div>
+        </div>
+        <div id="tab-users" style="display:none">
+          <div class="section-title">Users
+            <button class="btn btn-primary btn-sm" id="btn-add-user" onclick="openUserModal()">+ Add</button>
+          </div>
+          <div class="card" id="user-list">
+            <div class="spinner">Loading…</div>
+          </div>
+        </div>
+        <div id="tab-suppliers" style="display:none">
+          <div class="section-title">Suppliers
+            <button class="btn btn-primary btn-sm" onclick="openSupplierModal()">+ Add</button>
+          </div>
+          <div class="card" id="supplier-list">
+            <div class="spinner">Loading…</div>
+          </div>
+        </div>
+        <div id="tab-fees" style="display:none">
+          <div class="section-title">Service / Other Fees</div>
+          <div class="card fee-panel">
+            <div class="fee-head">
+              <div>
+                <div class="fee-title">Fee Types</div>
+                <div class="fee-help">
+                  Reusable POS charges such as labor, diagnostics, or battery service.
+                  Default amounts pre-fill at checkout and can still be edited per sale.
+                </div>
+              </div>
+              <span class="fee-count" id="fee-type-count">0 saved</span>
+            </div>
+            <div class="fee-add">
+              <div class="field"><label>Name</label>
+                <input id="ft-name" type="text" placeholder="e.g. Battery Charge"
+                  onkeydown="if(event.key==='Enter')addFeeTypeAdmin()">
+              </div>
+              <div class="field" style="width:130px"><label>Default Amount (₱)</label>
+                <input id="ft-amt" type="number" step="0.01" min="0" value="0.00"
+                  onkeydown="if(event.key==='Enter')addFeeTypeAdmin()">
+              </div>
+              <button class="btn btn-primary" onclick="addFeeTypeAdmin()">+ Add Fee Type</button>
+            </div>
+            <div id="fee-type-list" class="fee-list">
+              <div class="spinner">Loading…</div>
+            </div>
+            <div id="ft-note" class="fee-note">
+              Admin access required to save.
+            </div>
+          </div>
+        </div>
+        <div id="tab-reports" style="display:none">
+          <div class="section-title">Reports
+            <button class="btn btn-primary btn-sm" onclick="loadReports()">Refresh</button>
+          </div>
+
+          <div class="card" style="padding:14px 14px 16px;margin-bottom:12px">
+            <div style="font-weight:700;font-size:14px;margin-bottom:10px">Generate New Report</div>
+            <div class="field" style="margin-bottom:10px">
+              <label>Report Type</label>
+              <select id="report-type">
+                <option value="full">Full Report</option>
+                <option value="inventory">Inventory / Parts</option>
+                <option value="stock_in">Stock In History</option>
+                <option value="stock_out">Stock Out / Sales</option>
+                <option value="dashboard">Dashboard Summary</option>
+                <option value="adjustments">Adjustments</option>
+                <option value="returns">Returns</option>
+              </select>
+            </div>
+            <div class="report-date-row">
+              <div class="field">
+                <label>From Date</label>
+                <input id="report-start-date" type="date">
+              </div>
+              <div class="field">
+                <label>To Date</label>
+                <input id="report-end-date" type="date">
+              </div>
+            </div>
+            <button class="btn btn-primary btn-full" id="btn-generate-report" onclick="generateReport()">Generate
+              Report</button>
+            <div id="report-generate-note" style="font-size:12px;color:var(--text-muted);margin-top:9px">
+              Generated reports will appear below and can be downloaded on this device.
+            </div>
+          </div>
+
+          <div class="card" id="report-list">
+            <div class="spinner">Loading…</div>
+          </div>
+        </div>
+        <div id="tab-about" style="display:none">
+          <div class="section-title">About</div>
+          <div class="card about-card">
+            <img src="/logo.png" alt="Inventra" class="about-logo">
+            <div class="about-name"><span>Invent</span><span class="accent">ra</span></div>
+            <div class="about-tag">Automotive Inventory &amp; Sales System</div>
+            <span class="about-ver">Version <span id="about-version">2.1.15</span></span>
+            <div class="about-specs">
+              <div class="spec"><span>Database</span><b>SQLite (WAL)</b></div>
+              <div class="spec"><span>Backend</span><b>Flask + SQLAlchemy</b></div>
+              <div class="spec"><span>Desktop UI</span><b>CustomTkinter</b></div>
+              <div class="spec"><span>Web UI</span><b>Vanilla JS SPA</b></div>
+              <div class="spec"><span>Validation</span><b>Pydantic</b></div>
+              <div class="spec"><span>Reports</span><b>openpyxl (.xlsx)</b></div>
+              <div class="spec"><span>Web Server</span><b>Waitress (LAN)</b></div>
+              <div class="spec"><span>Developer</span><b>John Lloyd Sereno</b></div>
+            </div>
+            <div class="about-foot">
+              Inventra runs locally and can be accessed from phones and tablets on the same
+              Wi-Fi network through the Network URL shown in Settings → Server Control.
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <nav>
+      <button class="nav-btn active" onclick="showScreen('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
+          <rect x="14" y="14" width="7" height="7" rx="1" />
+        </svg>
+        <span>Dashboard</span></button>
+      <button class="nav-btn" onclick="showScreen('pos',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="21" r="1" />
+          <circle cx="20" cy="21" r="1" />
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+        </svg>
+        <span>POS</span></button>
+      <button class="nav-btn" onclick="showScreen('parts',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+        </svg>
+        <span>Parts</span></button>
+      <button class="nav-btn" onclick="showScreen('stock',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v20M2 12l10 10 10-10" />
+        </svg>
+        <span>Stock</span></button>
+      <button class="nav-btn" onclick="showScreen('returns',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 14L4 9l5-5" />
+          <path d="M4 9h11a5 5 0 0 1 5 5v0a5 5 0 0 1-5 5H9" />
+        </svg>
+        <span>Returns</span></button>
+      <button class="nav-btn" onclick="showScreen('settings',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3" />
+          <path
+            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        </svg>
+        <span>Settings</span></button>
+    </nav>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- Part Modal -->
+  <div class="modal-bg" id="modal-part">
+    <div class="modal">
+      <div class="modal-title"><span id="modal-part-title">Add Part</span>
+        <button class="modal-close" onclick="closeModal('modal-part')">✕</button>
+      </div>
+      <input type="hidden" id="part-id">
+      <div class="field"><label>Name *</label><input id="part-name" placeholder="e.g. Brake Pad Set"></div>
+      <div class="field"><label>Category</label>
+        <select id="part-cat">
+          <option value="">— No category —</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Cost Price</label><input id="part-cost" type="number" step="0.01" placeholder="0.00">
+        </div>
+        <div class="field"><label>Selling Price</label><input id="part-price" type="number" step="0.01"
+            placeholder="0.00"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Min Stock</label><input id="part-min" type="number" placeholder="5"></div>
+        <div class="field"><label>Unit</label>
+          <select id="part-unit">
+            <option>pcs</option>
+            <option>set</option>
+            <option>L</option>
+            <option>kg</option>
+            <option>m</option>
+            <option>box</option>
+            <option>pair</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Bin Location</label><input id="part-bin" placeholder="e.g. A-12"></div>
+      <div class="field"><label>Vehicle Makes</label><input id="part-makes" placeholder="Toyota, Honda…"></div>
+      <div class="field"><label>Description</label><textarea id="part-desc"></textarea></div>
+      <button class="btn btn-primary btn-full" onclick="savePart()">Save Part</button>
+    </div>
+  </div>
+
+  <!-- Adjust Stock Modal -->
+  <div class="modal-bg" id="modal-adjust">
+    <div class="modal">
+      <div class="modal-title"><span>Adjust Stock</span>
+        <button class="modal-close" onclick="closeModal('modal-adjust')">✕</button>
+      </div>
+      <input type="hidden" id="adj-part-id">
+      <div id="adj-part-info" style="font-size:13px;color:var(--text-muted);margin-bottom:10px"></div>
+      <div class="field"><label>Mode</label>
+        <select id="adj-mode" onchange="adjPreview()">
+          <option value="set">Set actual count</option>
+          <option value="delta">Add / remove amount</option>
+        </select>
+      </div>
+      <div class="field"><label>Value</label>
+        <input id="adj-value" type="number" step="1" oninput="adjPreview()" placeholder="0">
+      </div>
+      <div class="field"><label>Reason</label>
+        <select id="adj-reason">
+          <option value="COUNT_CORRECTION">Count correction</option>
+          <option value="DAMAGED">Damaged</option>
+          <option value="LOST">Lost / Stolen</option>
+          <option value="FOUND">Found</option>
+          <option value="EXPIRED">Expired</option>
+          <option value="OTHER">Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Note (optional)</label><input id="adj-note" placeholder="e.g. annual count"></div>
+      <div id="adj-preview" style="font-size:13px;margin:6px 0 12px"></div>
+      <button class="btn btn-primary btn-full" onclick="submitAdjust()">Apply Adjustment</button>
+    </div>
+  </div>
+
+  <!-- Return picker (issue or part) -->
+  <div class="modal-bg" id="modal-return-pick">
+    <div class="modal" style="max-width:560px">
+      <div class="modal-title"><span id="return-pick-title">Pick</span>
+        <button class="modal-close" onclick="closeModal('modal-return-pick')">✕</button>
+      </div>
+      <div class="field"><input id="return-pick-search" placeholder="🔍 Search by name or SKU…"
+          oninput="returnPickReload()"></div>
+      <div style="max-height:55vh;overflow:auto" id="return-pick-list">
+        <div class="spinner">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Return form -->
+  <div class="modal-bg" id="modal-return">
+    <div class="modal">
+      <div class="modal-title"><span>Process Return</span>
+        <button class="modal-close" onclick="closeModal('modal-return')">✕</button>
+      </div>
+      <input type="hidden" id="ret-part-id">
+      <input type="hidden" id="ret-stock-out-id">
+      <input type="hidden" id="ret-sale-id">
+      <div id="ret-info" style="font-size:13px;color:var(--text-muted);margin-bottom:10px"></div>
+      <div class="field"><label>Quantity</label>
+        <input id="ret-qty" type="number" step="1" min="1" value="1" oninput="retPreviewRefund()">
+      </div>
+      <div class="field"><label>Condition</label>
+        <select id="ret-condition">
+          <option value="RESELLABLE">Resellable (restock)</option>
+          <option value="DAMAGED">Damaged (scrap)</option>
+        </select>
+      </div>
+      <div class="field"><label>Reason</label>
+        <select id="ret-reason">
+          <option value="WRONG_SIZE">Wrong size</option>
+          <option value="WRONG_COMPAT">Wrong compatibility</option>
+          <option value="DAMAGED">Damaged</option>
+          <option value="DEFECTIVE">Defective</option>
+          <option value="CHANGED_MIND">Changed mind</option>
+          <option value="WARRANTY">Warranty</option>
+          <option value="OTHER">Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Refund Amount (₱)</label><input id="ret-refund" type="number" step="0.01"
+          placeholder="0.00"></div>
+      <div class="field"><label>Refund Method</label>
+        <select id="ret-method">
+          <option>Cash</option>
+          <option>GCash</option>
+          <option>Bank</option>
+        </select>
+      </div>
+      <div class="field"><label>Note (optional)</label><input id="ret-note"></div>
+      <button class="btn btn-primary btn-full" onclick="submitReturn()">Process Return</button>
+    </div>
+  </div>
+
+  <!-- Stock In Modal -->
+  <div class="modal-bg" id="modal-stock-in">
+    <div class="modal">
+      <div class="modal-title"><span id="si-modal-title">Receive Stock</span>
+        <button class="modal-close" onclick="closeModal('modal-stock-in')">✕</button>
+      </div>
+      <input type="hidden" id="si-txn-id">
+      <div class="field" id="si-part-field"><label>Part *</label>
+        <select id="si-part" onchange="updateSiCost()">
+          <option value="">— select part —</option>
+        </select>
+      </div>
+      <div id="si-part-readonly" style="display:none" class="field">
+        <label>Part</label>
+        <div id="si-part-name-lbl" style="padding:12px 0;font-weight:600"></div>
+      </div>
+      <div class="field"><label>Supplier</label>
+        <select id="si-supplier">
+          <option value="">— none —</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Quantity *</label><input id="si-qty" type="number" min="1" placeholder="1"
+            oninput="updateSiPreview()"></div>
+        <div class="field"><label>Unit Cost</label><input id="si-cost" type="number" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+      <div class="field"><label>Reference No.</label><input id="si-ref" placeholder="PO-001"></div>
+      <div id="si-preview"
+        style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:#166534;display:none">
+      </div>
+      <button class="btn btn-green btn-full" onclick="saveStockIn()">Receive Stock</button>
+    </div>
+  </div>
+
+  <!-- Stock Out Modal -->
+  <div class="modal-bg" id="modal-stock-out">
+    <div class="modal">
+      <div class="modal-title"><span id="so-modal-title">Issue Stock</span>
+        <button class="modal-close" onclick="closeModal('modal-stock-out')">✕</button>
+      </div>
+      <input type="hidden" id="so-txn-id">
+      <div class="field" id="so-part-field"><label>Part *</label>
+        <select id="so-part" onchange="updateSoPrice()">
+          <option value="">— select part —</option>
+        </select>
+      </div>
+      <div id="so-part-readonly" style="display:none" class="field">
+        <label>Part</label>
+        <div id="so-part-name-lbl" style="padding:12px 0;font-weight:600"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Quantity *</label><input id="so-qty" type="number" min="1" placeholder="1"
+            oninput="updateSoBreakdown()"></div>
+        <div class="field"><label>Selling Price</label><input id="so-price" type="number" step="0.01" placeholder="0.00"
+            oninput="updateSoBreakdown()"></div>
+      </div>
+      <div class="field"><label>Discount %</label><input id="so-disc" type="number" step="0.1" placeholder="0" min="0"
+          max="100" oninput="updateSoBreakdown()"></div>
+      <div id="so-breakdown"
+        style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;display:none">
+        <div style="display:flex;justify-content:space-between"><span>Subtotal</span><span id="so-sub">—</span></div>
+        <div style="display:flex;justify-content:space-between;color:var(--accent)"><span>Discount</span><span
+            id="so-disc-amt">—</span></div>
+        <div style="display:flex;justify-content:space-between;font-weight:700;color:var(--navy)">
+          <span>Total</span><span id="so-total">—</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;color:var(--brand-light)"><span>Gross Profit</span><span
+            id="so-profit">—</span></div>
+      </div>
+      <div class="field"><label>Reason *</label>
+        <select id="so-reason">
+          <option value="">— select —</option>
+          <option>Job Use</option>
+          <option>Sale</option>
+          <option>Damaged / Write-off</option>
+          <option>Customer Return</option>
+          <option>Adjustment</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Job Ref</label><input id="so-ref" placeholder="JO-001"></div>
+      <button class="btn btn-danger btn-full" onclick="saveStockOut()">Issue Stock</button>
+    </div>
+  </div>
+
+  <!-- Category Modal -->
+  <div class="modal-bg" id="modal-cat">
+    <div class="modal">
+      <div class="modal-title"><span id="modal-cat-title">Add Category</span>
+        <button class="modal-close" onclick="closeModal('modal-cat')">✕</button>
+      </div>
+      <input type="hidden" id="cat-id">
+      <div class="field"><label>Name *</label><input id="cat-name" placeholder="e.g. Brakes"></div>
+      <div class="field"><label>Color</label>
+        <div class="color-picker-row">
+          <div class="color-swatch" id="cat-color-swatch" style="background:#888888"
+            onclick="document.getElementById('cat-color-input').click()"></div>
+          <span id="cat-color-val">#888888</span>
+          <input type="color" id="cat-color-input" value="#888888" oninput="updateCatColor(this.value)">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="saveCategory()">Save Category</button>
+    </div>
+  </div>
+
+  <!-- User Modal -->
+  <div class="modal-bg" id="modal-user">
+    <div class="modal">
+      <div class="modal-title"><span id="modal-user-title">Add User</span>
+        <button class="modal-close" onclick="closeModal('modal-user')">✕</button>
+      </div>
+      <input type="hidden" id="user-edit-id">
+      <div class="field"><label>Username *</label><input id="user-username" placeholder="johndoe"></div>
+      <div class="field"><label>Full Name *</label><input id="user-fullname" placeholder="John Doe"></div>
+      <div class="field"><label>Role</label>
+        <select id="user-role">
+          <option value="staff">Staff</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="field"><label>Password <span id="pass-hint"
+            style="font-weight:400;text-transform:none;color:var(--text-light)">(leave blank to keep)</span></label>
+        <input id="user-password" type="password" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="saveUser()">Save User</button>
+    </div>
+  </div>
+
+  <!-- Supplier Modal -->
+  <div class="modal-bg" id="modal-supplier">
+    <div class="modal">
+      <div class="modal-title"><span id="modal-supplier-title">Add Supplier</span>
+        <button class="modal-close" onclick="closeModal('modal-supplier')">✕</button>
+      </div>
+      <input type="hidden" id="supplier-id">
+      <div class="field"><label>Name *</label><input id="sup-name" placeholder="ABC Auto Parts"></div>
+      <div class="field"><label>Contact Person</label><input id="sup-contact" placeholder="Juan dela Cruz"></div>
+      <div class="field-row">
+        <div class="field"><label>Phone</label><input id="sup-phone" type="tel"></div>
+        <div class="field"><label>Email</label><input id="sup-email" type="email"></div>
+      </div>
+      <div class="field"><label>Address</label><textarea id="sup-address" style="height:60px"></textarea></div>
+      <div class="field"><label>Notes</label><textarea id="sup-notes" style="height:60px"></textarea></div>
+      <button class="btn btn-primary btn-full" onclick="saveSupplier()">Save Supplier</button>
+    </div>
+  </div>
+
+  <script>
+    const S = { user: null, parts: [], categories: [], suppliers: [], isAdmin: false };
+    const fmt = (n, d = 2) => typeof n === 'number' ? '₱' + n.toLocaleString('en-PH', { minimumFractionDigits: d, maximumFractionDigits: d }) : '—';
+    const fmtDate = s => s ? s.slice(0, 16).replace('T', ' ') : '—';
+
+    /* ── API ── */
+    async function api(method, path, body) {
+      const opts = { method, headers: { 'Content-Type': 'application/json' } };
+      if (body) opts.body = JSON.stringify(body);
+      const r = await fetch('/api' + path, opts);
+      return r.json();
+    }
+    const GET = p => api('GET', p);
+    const POST = (p, b) => api('POST', p, b);
+    const PUT = (p, b) => api('PUT', p, b);
+    const DEL = p => api('DELETE', p);
+
+    /* ── Toast ── */
+    function toast(msg, kind = '') {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.className = 'show' + (kind ? ' ' + kind : '');
+      clearTimeout(t._tid); t._tid = setTimeout(() => t.className = '', 2800);
+    }
+
+    /* ── Auth ── */
+    async function doLogin() {
+      const u = document.getElementById('login-user').value.trim();
+      const p = document.getElementById('login-pass').value;
+      const err = document.getElementById('login-err');
+      const btn = document.getElementById('login-submit');
+      err.textContent = '';
+      if (!u || !p) { err.textContent = 'Please enter your username and password.'; return; }
+
+      btn.disabled = true;
+      btn.textContent = 'Signing In...';
+
+      try {
+        const r = await POST('/auth/login', { username: u, password: p });
+        if (!r.ok) {
+          err.textContent = r.error || 'Invalid username or password.';
+          document.getElementById('login-pass').value = '';
+          document.getElementById('login-pass').focus();
+          return;
+        }
+        S.user = r.data.username; S.isAdmin = r.data.is_admin;
+        document.getElementById('user-badge').textContent = r.data.full_name;
+        btn.textContent = 'Signed In';
+        btn.classList.add('success');
+        setTimeout(() => {
+          document.getElementById('login-screen').classList.remove('open');
+          document.getElementById('app').style.display = 'flex';
+          btn.disabled = false;
+          loadAll();
+        }, 250);
+      } catch (exc) {
+        err.textContent = 'Login failed. Please try again.';
+      } finally {
+        if (!btn.classList.contains('success')) {
+          btn.disabled = false;
+          btn.textContent = 'Sign In';
+        }
+      }
+    }
+    async function doLogout() { await POST('/auth/logout'); location.reload(); }
+    document.getElementById('login-user').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('login-pass').focus(); });
+    document.getElementById('login-pass').addEventListener('keydown', e => e.key === 'Enter' && doLogin());
+
+    /* ── Screen routing ── */
+    function showScreen(name, btn) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      const screenEl = document.getElementById('screen-' + name);
+      if (!screenEl) return;            // screen not implemented yet — don't crash the SPA
+      screenEl.classList.add('active');
+      if (btn) btn.classList.add('active');
+      if (name === 'dashboard') loadDashboard();
+      if (name === 'parts') loadParts();
+      if (name === 'stock') stockTab(_stockTab);
+      if (name === 'returns') loadReturns();
+      if (name === 'pos') loadPos();
+      if (name === 'settings') loadSettings();
+    }
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    document.querySelectorAll('.modal-bg').forEach(bg => {
+      bg.addEventListener('click', e => { if (e.target === bg) bg.classList.remove('open'); });
+    });
+
+    async function loadAll() {
+      await Promise.all([loadCategories(), loadSuppliers()]);
+      loadDashboard();
+    }
+
+    /* ── Dashboard ── */
+    async function loadDashboard() {
+      const r = await GET('/dashboard');
+      if (!r.ok) return;
+      const d = r.data;
+      document.getElementById('dash-metrics').innerHTML = `
+    <div class="metric"><div class="metric-label">Total Parts</div><div class="metric-value">${d.total_parts}</div></div>
+    <div class="metric"><div class="metric-label">Stock Value</div><div class="metric-value green" style="font-size:17px">${fmt(d.total_stock_value)}</div></div>
+    <div class="metric"><div class="metric-label">Low Stock</div><div class="metric-value ${d.low_stock_count > 0 ? 'danger' : ''}">${d.low_stock_count}</div></div>
+    <div class="metric"><div class="metric-label">Sales Today</div><div class="metric-value green" style="font-size:17px">${fmt(d.sales_today)}</div></div>
+    <div class="metric"><div class="metric-label">Profit Today</div><div class="metric-value green" style="font-size:17px">${fmt(d.profit_today)}</div></div>
+    <div class="metric"><div class="metric-label">Monthly Sales</div><div class="metric-value navy" style="font-size:16px">${fmt(d.sales_this_month)}</div></div>
+    <div class="metric"><div class="metric-label">Monthly Profit</div><div class="metric-value navy" style="font-size:16px">${fmt(d.profit_this_month)}</div></div>
+    <div class="metric"><div class="metric-label">Movements</div><div class="metric-value" style="font-size:16px">↓${d.stock_in_today} ↑${d.stock_out_today}</div></div>`;
+      const low = d.low_stock_parts;
+      document.getElementById('dash-low-stock').innerHTML = low.length
+        ? `<table><thead><tr><th>Part</th><th>Bin</th><th>Stock</th><th>Min</th></tr></thead><tbody>${low.map(p => `<tr><td>${p.name}</td><td>${p.bin}</td><td style="color:var(--danger);font-weight:700">${p.current}</td><td>${p.min}</td></tr>`).join('')}</tbody></table>`
+        : '<div class="empty"><div class="empty-icon">✅</div><p>No low-stock alerts</p></div>';
+      const act = d.recent_activity;
+      document.getElementById('dash-activity').innerHTML = act.length
+        ? act.map(a => {
+          const isIn = a.action.includes('IN') || a.action === 'PART_CREATED'; const isOut = a.action.includes('OUT');
+          return `<div class="activity-item"><div class="activity-icon ${isIn ? 'in' : isOut ? 'out' : 'other'}">${isIn ? '↓' : isOut ? '↑' : '✎'}</div><div class="activity-body"><div class="activity-part">${a.part_name}</div><div class="activity-meta">${a.action} · ${a.user} · ${fmtDate(a.created_at)}</div></div></div>`;
+        }).join('')
+        : '<div class="empty"><p>No recent activity</p></div>';
+    }
+
+    /* ── Categories ── */
+    async function loadCategories() {
+      const r = await GET('/categories');
+      if (!r.ok) return;
+      S.categories = r.data;
+      const opts = S.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      ['part-cat', 'parts-cat-filter'].forEach(id => {
+        const el = document.getElementById(id); if (!el) return;
+        const prev = el.value;
+        const prefix = id === 'parts-cat-filter' ? '<option value="">All categories</option>' : '<option value="">— No category —</option>';
+        el.innerHTML = prefix + opts;
+        el.value = [...el.options].some(o => o.value === prev) ? prev : '';
+      });
+    }
+    async function loadCatList() {
+      const r = await GET('/categories');
+      if (!r.ok) return;
+      S.categories = r.data;
+      const list = document.getElementById('cat-list');
+      if (!r.data.length) { list.innerHTML = '<div class="empty"><p>No categories yet</p></div>'; return; }
+      list.innerHTML = r.data.map(c => `
+    <div class="cat-item">
+      <div class="cat-dot" style="background:${c.color_hex}"></div>
+      <div class="cat-name">${c.name}</div>
+      <div class="cat-actions">
+        <button class="btn btn-sm btn-secondary" onclick='editCat(${JSON.stringify(c)})'>Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteCat(${c.id},'${c.name.replace(/'/g, "\\'")}')">✕</button>
+      </div>
+    </div>`).join('');
+    }
+    function openCatModal() {
+      document.getElementById('cat-id').value = '';
+      document.getElementById('cat-name').value = '';
+      updateCatColor('#888888');
+      document.getElementById('modal-cat-title').textContent = 'Add Category';
+      openModal('modal-cat');
+    }
+    function editCat(c) {
+      document.getElementById('cat-id').value = c.id;
+      document.getElementById('cat-name').value = c.name;
+      updateCatColor(c.color_hex || '#888888');
+      document.getElementById('modal-cat-title').textContent = 'Edit Category';
+      openModal('modal-cat');
+    }
+    function updateCatColor(v) {
+      document.getElementById('cat-color-swatch').style.background = v;
+      document.getElementById('cat-color-val').textContent = v;
+      document.getElementById('cat-color-input').value = v;
+    }
+    async function saveCategory() {
+      const id = document.getElementById('cat-id').value;
+      const name = document.getElementById('cat-name').value.trim();
+      const color_hex = document.getElementById('cat-color-val').textContent;
+      if (!name) { toast('Name required', 'error'); return; }
+      const r = id ? await PUT(`/categories/${id}`, { name, color_hex }) : await POST('/categories', { name, color_hex });
+      if (!r.ok) { toast(r.error, 'error'); return; }
+      toast(id ? 'Category updated' : 'Category added');
+      closeModal('modal-cat');
+      await loadCategories(); loadCatList();
+    }
+    async function deleteCat(id, name) {
+      if (!confirm(`Delete category "${name}"?`)) return;
+      const r = await DEL(`/categories/${id}`);
+      if (!r.ok) { toast(r.error, 'error'); return; }
+      toast('Category deleted', 'warning');
+      await loadCategories(); loadCatList();
+    }
+
+    /* ── Parts ── */
+    let _allParts = [];
+    async function loadParts() {
+      document.getElementById('parts-table').innerHTML = '<div class="spinner">Loading…</div>';
+      const r = await GET('/parts');
+      if (!r.ok) return;
+
+      _allParts = r.data || [];
+      filterParts();
+    }
+
+    function _normText(v) {
+      return String(v || '').trim().toLowerCase();
+    }
+
+    function _partMatchesCategory(part, selectedValue) {
+      if (!selectedValue) return true;
+
+      const selectedCat = S.categories.find(c => String(c.id) === String(selectedValue));
+      const selectedName = _normText(selectedCat ? selectedCat.name : selectedValue);
+
+      const partCategoryId = part.category_id ?? part.categoryId ?? part.cat_id ?? null;
+      const partCategoryName = _normText(part.category || part.category_name || '');
+
+      // Match by category_id when the API provides it.
+      if (partCategoryId !== null && partCategoryId !== undefined && String(partCategoryId) === String(selectedValue)) {
+        return true;
+      }
+
+      // Fallback: match by category name.
+      // This fixes old part_stock views that do not include category_id.
+      if (selectedName && partCategoryName === selectedName) {
+        return true;
+      }
+
+      return false;
+    }
+
+    function filterParts() {
+      const q = _normText(document.getElementById('parts-search').value);
+      const cat = document.getElementById('parts-cat-filter').value;
+      let rows = _allParts || [];
+
+      if (q) {
+        rows = rows.filter(p => `${p.name || ''} ${p.sku || ''} ${p.bin_location || ''} ${p.category || ''}`.toLowerCase().includes(q));
+      }
+
+      if (cat) {
+        rows = rows.filter(p => _partMatchesCategory(p, cat));
+      }
+
+      renderParts(rows);
+    }
+
+    function getCategoryColor(part) {
+      const found = S.categories.find(c =>
+        Number(c.id) === Number(part.category_id) ||
+        String(c.name || '').toLowerCase() === String(part.category || '').toLowerCase()
+      );
+      return (found && (found.color_hex || found.color || found.colorHex)) || '#64748b';
+    }
+
+    function renderParts(rows) {
+      const el = document.getElementById('parts-table');
+      if (!rows.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📦</div><p>No parts found</p></div>'; return; }
+      el.innerHTML = `<table><thead><tr><th>Name</th><th>Cat</th><th>Stock</th><th>Price</th><th></th></tr></thead><tbody>
+    ${rows.map(p => {
+        const low = p.is_low_stock; const catColor = getCategoryColor(p);
+        return `<tr><td><div style="font-weight:600;font-size:14px">${p.name}</div><div style="font-size:11px;color:var(--text-muted)">${p.sku}·${p.bin_location || '—'}</div></td>
+        <td>${p.category ? `<span class="part-category-text" style="color:${catColor}">${p.category}</span>` : '—'}</td>
+        <td><span class="stock-badge ${low ? 'low' : 'ok'}">${p.current_stock}</span>${low ? '<br><span style="font-size:10px;color:var(--danger)">LOW</span>' : ''}</td>
+        <td style="font-size:13px">${fmt(p.selling_price)}</td>
+        <td><div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-sm btn-secondary" onclick="editPart(${p.id})">Edit</button>
+          <button class="btn btn-sm btn-green" onclick="quickStockIn(${p.id})">↓</button>
+          <button class="btn btn-sm btn-danger" onclick="quickStockOut(${p.id})">↑</button>
+          ${S.isAdmin ? `<button class="btn btn-sm btn-secondary" onclick="openAdjust(${p.id})" title="Adjust Stock">⚖</button>` : ''}
+          ${S.isAdmin ? `<button class="btn btn-sm btn-danger btn-icon" onclick='deletePart(${p.id}, ${JSON.stringify(p.name || "this part")})' title="Delete Part" aria-label="Delete Part"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 15H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>` : ''}
+        </div></td></tr>`;
+      }).join('')}
+  </tbody></table>`;
+    }
+    function openPartModal() {
+      document.getElementById('part-id').value = '';
+      ['part-name', 'part-cost', 'part-price', 'part-min', 'part-bin', 'part-makes', 'part-desc'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('part-cat').value = '';
+      document.getElementById('part-unit').value = 'pcs';
+      document.getElementById('modal-part-title').textContent = 'Add Part';
+      openModal('modal-part');
+    }
+    async function editPart(id) {
+      const r = await GET(`/parts/${id}`);
+      if (!r.ok) { toast(r.error, 'error'); return; }
+      const p = r.data;
+      document.getElementById('part-id').value = p.id;
+      document.getElementById('part-name').value = p.name || '';
+      document.getElementById('part-cat').value = p.category_id || '';
+      document.getElementById('part-cost').value = p.unit_cost || '';
+      document.getElementById('part-price').value = p.selling_price || '';
+      document.getElementById('part-min').value = p.min_stock || '';
+      document.getElementById('part-unit').value = p.unit || 'pcs';
+      document.getElementById('part-bin').value = p.bin_location || '';
+      document.getElementById('part-makes').value = p.vehicle_makes || '';
+      document.getElementById('part-desc').value = p.description || '';
+      document.getElementById('modal-part-title').textContent = 'Edit Part';
+      openModal('modal-part');
+    }
+    async function savePart() {
+      const id = document.getElementById('part-id').value;
+      const body = {
+        name: document.getElementById('part-name').value.trim(),
+        category_id: +document.getElementById('part-cat').value || null,
+        unit_cost: +document.getElementById('part-cost').value || 0,
+        selling_price: +document.getElementById('part-price').value || 0,
+        min_stock: +document.getElementById('part-min').value || 5,
+        unit: document.getElementById('part-unit').value,
+        bin_location: document.getElementById('part-bin').value.trim() || null,
+        vehicle_makes: document.getElementById('part-makes').value.trim() || null,
+        description: document.getElementById('part-desc').value.trim() || null
+      };
+      if (!body.name) { toast('Part name required', 'error'); return; }
+      const r = id ? await PUT(`/parts/${id}`, body) : await POST('/parts', body);
+      if (!r.ok) { toast(r.error, 'error'); return; }
+      toast(id ? 'Part updated' : 'Part added');
+      closeModal('modal-part'); loadParts();
+    }
+    async function deletePart(id, name) {
+      if (!S.isAdmin) { toast('Only admins can delete parts', 'error'); return; }
+      if (!confirm(`Delete part "${name}"?`)) return;
+      const r = await DEL(`/parts/${id}`);
+      if (!r.ok) { toast(r.error || 'Delete failed', 'error'); return; }
+      toast('Part deleted', 'warning');
+      await loadParts();
+      loadDashboard();
+    }
+
+    /* ── Stock Tab ── */
+    let _stockTab = 'in';
+    function _today() {
+      const d = new Date();  // local date (not UTC) so it matches the user's day
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+    function siAll() { document.getElementById('si-date').value = ''; loadStockIn(); }
+    function siToday() { document.getElementById('si-date').value = _today(); loadStockIn(); }
+    function soAll() { document.getElementById('so-date').value = ''; loadStockOut(); }
+    function soToday() { document.getElementById('so-date').value = _today(); loadStockOut(); }
+    function stockTab(which) {
+      _stockTab = which;
+      // Default the active panel's date filter to today when it's blank.
+      const dateEl = document.getElementById(which === 'in' ? 'si-date' : 'so-date');
+      if (dateEl && !dateEl.value) dateEl.value = _today();
+      const inP = document.getElementById('stock-in-panel');
+      const outP = document.getElementById('stock-out-panel');
+      const inB = document.getElementById('stock-tab-in');
+      const outB = document.getElementById('stock-tab-out');
+      const on = b => { b.classList.add('btn-primary'); b.classList.remove('btn-secondary'); };
+      const off = b => { b.classList.add('btn-secondary'); b.classList.remove('btn-primary'); };
+      if (which === 'in') {
+        inP.style.display = ''; outP.style.display = 'none'; on(inB); off(outB);
+        clearSiSelection(); loadStockIn();
+      } else {
+        inP.style.display = 'none'; outP.style.display = ''; on(outB); off(inB);
+        clearSoSelection(); loadStockOut();
+      }
+    }
+
+    /* ── Stock Adjustment ── */
+    let _adjCurrent = 0;
+    async function openAdjust(id) {
+      const p = (_allParts || []).find(x => x.id === id);
+      if (!p) { toast('Part not found', 'error'); return; }
+      _adjCurrent = p.current_stock || 0;
+      document.getElementById('adj-part-id').value = id;
+      document.getElementById('adj-part-info').textContent =
+        `${p.name} · ${p.sku} — current on-hand: ${_adjCurrent}`;
+      document.getElementById('adj-mode').value = 'set';
+      document.getElementById('adj-value').value = _adjCurrent;
+      document.getElementById('adj-reason').value = 'COUNT_CORRECTION';
+      document.getElementById('adj-note').value = '';
+      adjPreview();
+      openModal('modal-adjust');
+    }
+    function adjPreview() {
+      const mode = document.getElementById('adj-mode').value;
+      const raw = document.getElementById('adj-value').value;
+      const el = document.getElementById('adj-preview');
+      const v = parseInt(raw, 10);
+      if (isNaN(v)) { el.textContent = 'Enter a whole number.'; el.style.color = 'var(--text-muted)'; return; }
+      const newCount = mode === 'set' ? v : _adjCurrent + v;
+      const delta = newCount - _adjCurrent;
+      if (delta === 0) { el.textContent = 'No change — current stock is already this value.'; el.style.color = 'var(--text-muted)'; return; }
+      el.textContent = `${_adjCurrent} → ${newCount}  (${delta > 0 ? '+' : ''}${delta} units)`;
+      el.style.color = delta > 0 ? 'var(--success, #16a34a)' : 'var(--danger)';
+    }
+    async function submitAdjust() {
+      const id = document.getElementById('adj-part-id').value;
+      const body = {
+        mode: document.getElementById('adj-mode').value,
+        value: parseInt(document.getElementById('adj-value').value, 10),
+        reason_code: document.getElementById('adj-reason').value,
+        note: document.getElementById('adj-note').value.trim() || null,
+      };
+      if (isNaN(body.value)) { toast('Enter a whole number', 'error'); return; }
+      const r = await POST(`/parts/${id}/adjust`, body);
+      if (!r.ok) { toast(r.error || 'Adjust failed', 'error'); return; }
+      toast('Stock adjusted');
+      closeModal('modal-adjust'); loadParts(); loadDashboard();
+    }
+
+    /* ── Stock In ── */
+    let _siSelected = null;
+    function clearSiSelection() { _siSelected = null; document.getElementById('si-sel-bar').classList.remove('show'); }
+
+    async function loadStockIn() {
+      document.getElementById('stockin-table').innerHTML = '<div class="spinner">Loading…</div>';
+      const _d = (document.getElementById('si-date') || {}).value || '';
+      const r = await GET('/stock/in' + (_d ? `?date_from=${_d}&date_to=${_d}` : ''));
+      if (!r.ok) return;
+      const rows = r.data;
+      if (!rows.length) { document.getElementById('stockin-table').innerHTML = '<div class="empty"><div class="empty-icon">📥</div><p>No stock-in records</p></div>'; return; }
+      document.getElementById('stockin-table').innerHTML = `<table><thead><tr><th></th><th>Date</th><th>Part</th><th>Qty</th><th>Cost</th><th>Supplier</th><th>Ref</th><th>By</th></tr></thead><tbody>
+    ${rows.map(r => `<tr class="clickable" onclick="selectSiRow(${r.id},this)" id="si-row-${r.id}">
+      <td><input type="radio" name="si-sel" id="si-chk-${r.id}" style="accent-color:var(--navy)"></td>
+      <td style="font-size:12px;white-space:nowrap">${fmtDate(r.received_at)}</td>
+      <td><div style="font-weight:600;font-size:13px">${r.part_name}</div></td>
+      <td style="font-weight:700;color:var(--brand-light)">${r.quantity}</td>
+      <td>${fmt(r.unit_cost)}</td>
+      <td style="font-size:12px">${r.supplier_name}</td>
+      <td style="font-size:12px">${r.reference_no || '—'}</td>
+      <td style="font-size:12px">${r.received_by || '—'}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+    }
+    function selectSiRow(id, tr) {
+      document.querySelectorAll('#stockin-table tr').forEach(r => r.classList.remove('selected-row'));
+      tr.classList.add('selected-row');
+      document.getElementById(`si-chk-${id}`).checked = true;
+      _siSelected = id;
+      document.getElementById('si-sel-label').textContent = `Transaction #${id} selected`;
+      document.getElementById('si-sel-bar').classList.add('show');
+    }
+    function openStockInModal(partId) {
+      document.getElementById('si-txn-id').value = '';
+      document.getElementById('si-modal-title').textContent = 'Receive Stock';
+      document.getElementById('si-part-field').style.display = '';
+      document.getElementById('si-part-readonly').style.display = 'none';
+      ['si-qty', 'si-cost', 'si-ref'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('si-part').innerHTML = '<option value="">— select part —</option>' + _allParts.map(p => `<option value="${p.id}" data-cost="${p.unit_cost || 0}">${p.name} (${p.sku})</option>`).join('');
+      document.getElementById('si-supplier').innerHTML = '<option value="">— none —</option>' + S.suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+      if (partId) { document.getElementById('si-part').value = partId; updateSiCost(); }
+      document.getElementById('si-preview').style.display = 'none';
+      openModal('modal-stock-in');
+    }
+    function updateSiCost() {
+      // Pre-fill Unit Cost with the part's saved cost so the user needn't retype it.
+      const opt = document.getElementById('si-part').selectedOptions[0];
+      if (opt && opt.dataset.cost !== undefined) {
+        document.getElementById('si-cost').value = opt.dataset.cost;
+      }
+      updateSiPreview();
+    }
+    function updateSiPreview() {
+      const partId = +document.getElementById('si-part').value;
+      const qty = +document.getElementById('si-qty').value || 0;
+      const part = _allParts.find(p => p.id === partId);
+      if (part && qty > 0) {
+        const after = part.current_stock + qty;
+        document.getElementById('si-preview').textContent = `Stock after receipt: ${part.current_stock} → ${after} ${part.unit || 'pcs'}`;
+        document.getElementById('si-preview').style.display = '';
+      } else { document.getElementById('si-preview').style.display = 'none'; }
+    }
+    async function openModifyStockIn(id) {
+      const r = await GET(`/stock/in/${id}/detail`);
+      if (!r.ok) { toast(r.error, 'error'); return; }
+      const t = r.data;
+      document.getElementById('si-txn-id').value = t.id;
+      document.getElementById('si-modal-title').textContent = `Modify Txn #${t.id}`;
+      document.getElementById('si-part-field').style.display = 'none';
+      document.getElementById('si-part-readonly').style.display = '';
+      document.getElementById('si-part-name-lbl').textContent = t.part_name;
+      document.getElementById('si-qty').value = t.quantity;
+      document.getElementById('si-cost').value = t.unit_cost || 0;
+      document.getElementById('si-ref').value = t.reference_no || '';
+      document.getElementById('si-supplier').innerHTML = '<option value="">— none —</option>' + S.suppliers.map(s => `<option value="${s.id}"${s.id === t.supplier_id ? ' selected' : ''}>${s.name}</option>`).join('');
+      document.getElementById('si-preview').style.display = 'none';
+      openModal('modal-stock-in');
+    }
+    async function modifySelectedStockIn() { if (_siSelected) await openModifyStockIn(_siSelected); }
+    async function saveStockIn() {
+      const txnId = document.getElementById('si-txn-id').value;
+      const body = {
+        part_id: +document.getElementById('si-part').value || undefined,
+        supplier_id: +document.getElementById('si-supplier').value || null,
+        quantity: +document.getElementById('si-qty').value,
+        unit_cost: +document.getElementById('si-cost').value || 0,
+        reference_no: document.getElementById('si-ref').value.trim() || null,
+      };
+      if (txnId) {
+        const r = await POST(`/stock/in/${txnId}/update`, body);
+        if (!r.ok) { toast(r.error, 'error'); return; }
+        toast('Transaction updated');
+      } else {
+        if (!body.part_id) { toast('Select a part', 'error'); return; }
+        if (!body.quantity || body.quantity < 1) { toast('Enter quantity', 'error'); return; }
+        const r = await POST('/stock/in', body);
+        if (!r.ok) { toast(r.error, 'error'); return; }
+        toast(`Received ${r.data.quantity} units`);
+      }
+      closeModal('modal-stock-in'); clearSiSelection(); loadStockIn(); loadDashboard();
+    }
+    async function cancelSelectedStockIn() {
+      if (!_siSelected) return;
+      if (!confirm(`Cancel Stock In transaction #${_siSelected}? This will remove the received quantity from inventory.`)) return;
+      const r = await DEL(`/stock/in/${_siSelected}`);
+      if (!r.ok) { toast(r.error, 'error'); return; }
+      toast('Transaction cancelled', 'warning');
+      clearSiSelection(); loadStockIn(); loadParts(); loadDashboard();
+    }
+    function quickStockIn(id) { showScreen('stock', document.querySelector("nav .nav-btn[onclick*=\"'stock'\"]")); stockTab('in'); openStockInModal(id); }
+
+    /* ── Stock Out ── */
+    let _soSelected = null;
+    function clearSoSelection() { _soSelected = null; document.getElementById('so-sel-bar').classList.remove('show'); }
+
+    async function loadStockOut() {
+      document.getElementById('stockout-table').innerHTML = '<div class="spinner">Loading…</div>';
+      const _d = (document.getElementById('so-date') || {}).value || '';
+      const r = await GET('/stock/out' + (_d ? `?date_from=${_d}&date_to=${_d}` : ''));
+      if (!r.ok) return;
+      const rows = r.data;
+      if (!rows.length) { document.getElementById('stockout-table').innerHTML = '<div class="empty"><div class="empty-icon">📤</div><p>No stock-out records</p></div>'; return; }
+      document.getElementById('stockout-table').innerHTML = `<table><thead><tr><th></th><th>Date</th><th>Part</th><th>Qty</th><th>Returned</th><th>Total</th><th>Profit</th><th>Reason</th><th>Ref</th></tr></thead><tbody>
+    ${rows.map(r => `<tr class="clickable" onclick="selectSoRow(${r.id},this)" id="so-row-${r.id}">
+      <td><input type="radio" name="so-sel" id="so-chk-${r.id}" style="accent-color:var(--navy)"></td>
+      <td style="font-size:12px;white-space:nowrap">${fmtDate(r.issued_at)}</td>
+      <td><div style="font-weight:600;font-size:13px">${r.part_name}</div></td>
+      <td style="font-weight:700;color:var(--danger)">${r.quantity}</td>
+      <td style="font-size:13px;text-align:center;color:${r.returned ? 'var(--danger)' : 'var(--text-muted)'}">${r.returned ? r.returned : '—'}</td>
+      <td style="font-size:13px">${fmt(r.net_total)}</td>
+      <td style="font-size:13px;color:${(r.net_profit || 0) >= 0 ? 'var(--brand-light)' : 'var(--danger)'}">${fmt(r.net_profit)}</td>
+      <td style="font-size:12px">${r.reason}</td>
+      <td style="font-size:12px">${r.job_ref || '—'}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+    }
+    function selectSoRow(id, tr) {
+      document.querySelectorAll('#stockout-table tr').forEach(r => r.classList.remove('selected-row'));
+      tr.classList.add('selected-row');
+      document.getElementById(`so-chk-${id}`).checked = true;
+      _soSelected = id;
+      document.getElementById('so-sel-label').textContent = `Transaction #${id} selected`;
+      document.getElementById('so-sel-bar').classList.add('show');
+    }
+    function updateSoPrice() {
+      const sel = document.getElementById('so-part');
+      const opt = sel.selectedOptions[0];
+      if (opt && opt.dataset.price) document.getElementById('so-price').value = opt.dataset.price;
+      updateSoBreakdown();
+    }
+    function updateSoBreakdown() {
+      const qty = +document.getElementById('so-qty').value || 0;
+      const price = +document.getElementById('so-price').value || 0;
+      const disc = +document.getElementById('so-disc').value || 0;
+      if (!qty && !price) { document.getElementById('so-breakdown').style.display = 'none'; return; }
+      const sub = qty * price;
+      const dAmt = sub * disc / 100;
+      const total = sub - dAmt;
+      // Find part cost for profit
+      const partId = +document.getElementById('so-part').value;
+      const part = _allParts.find(p => p.id === partId);
+      const cost = (part?.unit_cost || 0) * qty;
+      const profit = total - cost;
+      document.getElementById('so-sub').textContent = fmt(sub);
+      document.getElementById('so-disc-amt').textContent = dAmt > 0 ? `-${fmt(dAmt)}` : '—';
+      document.getElementById('so-total').textContent = fmt(total);
+      document.getElementById('so-profit').textContent = fmt(profit);
+      document.getElementById('so-profit').style.color = profit >= 0 ? 'var(--brand-light)' : 'var(--danger)';
+      document.getElementById('so-breakdown').style.display = '';
+    }
+    function openStockOutModal(partId) {
+      document.getElementById('so-txn-id').value = '';
+      document.getElementById('so-modal-title').textContent = 'Issue Stock';
+      document.getElementById('so-part-field').style.display = '';
+      document.getElementById('so-part-readonly').style.display = 'none';
+      ['so-qty', 'so-price', 'so-disc', 'so-ref'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('so-reason').value = '';
+      document.getElementById('so-breakdown').style.display = 'none';
+      document.getElementById('so-part').innerHTML = '<option value="">— select part —</option>' + _allParts.map(p => `<option value="${p.id}" data-price="${p.selling_price}">${p.name} (stock:${p.current_stock})</option>`).join('');
+      if (partId) { document.getElementById('so-part').value = partId; updateSoPrice(); }
+      openModal('modal-stock-out');
+    }
+    async function openModifyStockOut(id) {
+      const r = await GET(`/stock/out/${id}/detail`);
+      if (!r.ok) { toast(r.error, 'error'); return; }
+      const t = r.data;
+      document.getElementById('so-txn-id').value = t.id;
+      document.getElementById('so-modal-title').textContent = `Modify Txn #${t.id}`;
+      document.getElementById('so-part-field').style.display = 'none';
+      document.getElementById('so-part-readonly').style.display = '';
+      document.getElementById('so-part-name-lbl').textContent = t.part_name;
+      document.getElementById('so-qty').value = t.quantity;
+      document.getElementById('so-price').value = t.selling_price || 0;
+      document.getElementById('so-disc').value = t.discount_pct || 0;
+      document.getElementById('so-reason').value = t.reason || '';
+      document.getElementById('so-ref').value = t.job_ref || '';
+      updateSoBreakdown();
+      openModal('modal-stock-out');
+    }
+    async function modifySelectedStockOut() { if (_soSelected) await openModifyStockOut(_soSelected); }
+    async function saveStockOut() {
+      const txnId = document.getElementById('so-txn-id').value;
+      const body = {
+        part_id: +document.getElementById('so-part').value || undefined,
+        quantity: +document.getElementById('so-qty').value,
+        selling_price: +document.getElementById('so-price').value || 0,
+        discount_pct: +document.getElementById('so-disc').value || 0,
+        reason: document.getElementById('so-reason').value,
+        job_ref: document.getElementById('so-ref').value.trim() || null,
+      };
+      if (txnId) {
+        const r = await POST(`/stock/out/${txnId}/update`, body);
+        if (!r.ok) { toast(r.error, 'error'); return; }
+        toast('Transaction updated');
+      } else {
+        if (!body.part_id) { toast('Select a part', 'error'); return; }
+        if (!body.quantity || body.quantity < 1) { toast('Enter quantity', 'error'); return; }
+        if (!body.reason) { toast('Select a reason', 'error'); return; }
+        const r = await POST('/stock/out', body);
+        if (!r.ok) { toast(r.error, 'error'); return; }
+        toast(`Issued ${r.data.quantity} units · ${fmt(r.data.total_amount)}`);
+      }
+      closeModal('modal-stock-out'); clearSoSelection(); loadStockOut(); loadParts(); loadDashboard();
+    }
+    async function cancelSelectedStockOut() {
+      if (!_soSelected) return;
+      if (!confirm(`Cancel Stock Out transaction #${_soSelected}? This will restore the stock to inventory.`)) return;
+      const r = await DEL(`/stock/out/${_soSelected}`);
+      if (!r.ok) { toast(r.error, 'error'); return; }
+      toast('Transaction cancelled, stock restored', 'warning');
+      clearSoSelection(); loadStockOut(); loadParts(); loadDashboard();
+    }
+    function quickStockOut(id) { showScreen('stock', document.querySelector("nav .nav-btn[onclick*=\"'stock'\"]")); stockTab('out'); openStockOutModal(id); }
+
+    /* ── Settings ── */
+    /* ── POS ── */
+    const POS = { cart: {}, cfg: null, results: [], discType: 'amount', fees: [], feeTypes: [] };
+
+    async function loadPos() {
+      const s = await GET('/pos/settings');
+      if (s.ok) POS.cfg = s.data;
+      await loadPosCategories();
+      await loadFeeTypes();
+      await posSearch();
+      renderCart();
+    }
+
+    async function loadFeeTypes() {
+      const r = await GET('/pos/fee-types');
+      POS.feeTypes = r.ok ? r.data : [];
+      const sel = document.getElementById('pos-fee-type');
+      if (!sel) return;
+      sel.innerHTML = POS.feeTypes.map((f, i) =>
+        `<option value="${i}">${f.name}</option>`).join('') +
+        '<option value="custom">Custom…</option>';
+      onFeeTypeChange();
+    }
+
+    function onFeeTypeChange() {
+      const sel = document.getElementById('pos-fee-type');
+      const amt = document.getElementById('pos-fee-amt');
+      if (!sel || !amt) return;
+      const v = sel.value;
+      if (v === 'custom' || v === '') { amt.value = '0.00'; return; }
+      const ft = POS.feeTypes[+v];
+      if (ft) amt.value = (+ft.default_amount || 0).toFixed(2);
+    }
+
+    function addFee() {
+      const sel = document.getElementById('pos-fee-type');
+      const amtEl = document.getElementById('pos-fee-amt');
+      const err = document.getElementById('pos-err');
+      const amt = Math.round((parseFloat(amtEl.value) || 0) * 100) / 100;
+      if (amt <= 0) { err.textContent = 'Fee amount must be greater than 0.'; return; }
+      let name = 'Service fee';
+      if (sel.value !== 'custom' && sel.value !== '') {
+        const ft = POS.feeTypes[+sel.value];
+        if (ft) name = ft.name;
+      }
+      err.textContent = '';
+      POS.fees.push({ name, amount: amt });
+      amtEl.value = '0.00';
+      renderCart();
+    }
+
+    function removeFee(i) { POS.fees.splice(i, 1); renderCart(); }
+
+    async function loadPosCategories() {
+      const sel = document.getElementById('pos-cat');
+      if (!sel || sel.dataset.loaded) return;
+      const r = await GET('/categories');
+      if (r.ok) {
+        sel.innerHTML = '<option value="">All Categories</option>' +
+          r.data.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+        sel.dataset.loaded = '1';
+      }
+    }
+
+    let _posSearchTid = null;
+    function posSearch() {
+      clearTimeout(_posSearchTid);
+      _posSearchTid = setTimeout(async () => {
+        const q = document.getElementById('pos-search').value.trim();
+        const cat = document.getElementById('pos-cat').value;
+        const r = await GET('/pos/parts?search=' + encodeURIComponent(q) +
+          '&category=' + encodeURIComponent(cat));
+        POS.results = r.ok ? r.data : [];
+        renderPosResults();
+      }, 180);
+    }
+
+    function renderPosResults() {
+      const el = document.getElementById('pos-results');
+      if (!POS.results.length) { el.innerHTML = '<div class="empty"><p>No products found</p></div>'; return; }
+      el.innerHTML = POS.results.map(p => {
+        const stock = p.current_stock || 0;
+        const stockTxt = stock <= 0 ? '<span class="oos">Out of stock</span>' : ('Stock: ' + stock);
+        const cat = p.category || 'Uncategorized';
+        return `<div class="pos-result">
+          <div class="pos-result-name"><b>${p.name}</b>
+            <div class="meta">SKU ${p.sku} · ${cat} · ${stockTxt}</div></div>
+          <div class="pos-result-price">${fmt(p.selling_price || 0)}</div>
+          <button class="pos-add-btn" ${stock <= 0 ? 'disabled' : ''} onclick="addToCart(${p.id})">Add</button>
+        </div>`;
+      }).join('');
+    }
+
+    function addToCart(pid) {
+      const p = POS.results.find(r => r.id === pid);
+      if (!p) return;
+      const stock = p.current_stock || 0;
+      if (stock <= 0) { toast(p.name + ' is out of stock', 'error'); return; }
+      const c = POS.cart[pid];
+      if (c) { if (c.qty < stock) c.qty++; else { toast('Only ' + stock + ' in stock', 'warning'); } }
+      else POS.cart[pid] = { sku: p.sku, name: p.name, qty: 1, price: +(p.selling_price || 0), stock };
+      renderCart();
+    }
+
+    function renderCart() {
+      const el = document.getElementById('pos-cart');
+      const ids = Object.keys(POS.cart);
+      if (!ids.length && !POS.fees.length) {
+        el.innerHTML = '<div class="empty" style="padding:18px"><p>Cart is empty.<br>Add products from the left.</p></div>';
+        recomputeTotals(); return;
+      }
+      let html = ids.map(pid => {
+        const it = POS.cart[pid];
+        const lt = it.price * it.qty;
+        return `<div class="cart-row">
+          <div class="ci-name"><b>${it.name}</b><span>${it.sku} · stock ${it.stock}</span></div>
+          <div class="qtybox">
+            <button onclick="bumpQty(${pid},-1)">−</button>
+            <span>${it.qty}</span>
+            <button onclick="bumpQty(${pid},1)">＋</button>
+          </div>
+          <div class="unit">${fmt(it.price)}</div>
+          <div class="lt">${fmt(lt)}</div>
+          <button class="rm" onclick="removeItem(${pid})">✕</button>
+        </div>`;
+      }).join('');
+      html += POS.fees.map((f, i) => `<div class="cart-row">
+          <div class="ci-name"><b>${f.name}</b><span style="color:var(--brand-light)">Service / fee</span></div>
+          <div class="lt">${fmt(f.amount)}</div>
+          <button class="rm" onclick="removeFee(${i})">✕</button>
+        </div>`).join('');
+      el.innerHTML = html;
+      recomputeTotals();
+    }
+
+    function bumpQty(pid, d) {
+      const it = POS.cart[pid]; if (!it) return;
+      const n = it.qty + d;
+      if (n <= 0) { removeItem(pid); return; }
+      if (n > it.stock) { toast('Only ' + it.stock + ' in stock', 'warning'); return; }
+      it.qty = n; renderCart();
+    }
+    function setDiscType(t) {
+      POS.discType = t;
+      document.querySelectorAll('#pos-disc-type button').forEach(b =>
+        b.classList.toggle('active', b.dataset.type === t));
+      recomputeTotals();
+    }
+    function removeItem(pid) { delete POS.cart[pid]; renderCart(); }
+    function clearCart() { POS.cart = {}; POS.fees = []; renderCart(); }
+
+    function discountState(subtotal) {
+      const input = document.getElementById('pos-disc-value');
+      const rawText = (input.value || '').trim();
+      const raw = rawText === '' ? 0 : parseFloat(rawText);
+      let error = '';
+      let discount = 0;
+      let value = Number.isFinite(raw) ? raw : 0;
+      if (!Number.isFinite(raw)) error = 'Discount must be a number.';
+      if (value < 0) error = 'Discount cannot be negative.';
+      if (POS.discType === 'percent') {
+        if (value > 100) error = 'Percent discount cannot exceed 100%.';
+        discount = error ? 0 : Math.round(subtotal * value) / 100;
+      } else {
+        if (value > subtotal) error = 'Amount discount cannot exceed subtotal.';
+        discount = error ? 0 : value;
+      }
+      input.classList.toggle('invalid', !!error);
+      return { discount, value, error };
+    }
+
+    function recomputeTotals() {
+      const cfg = POS.cfg || {};
+      let subtotal = 0;
+      Object.values(POS.cart).forEach(it => { subtotal += it.price * it.qty; });
+      const ds = discountState(subtotal);
+      const discount = ds.discount;
+      const net = subtotal - discount;
+      const taxOn = !!cfg.tax_enabled && (+cfg.tax_rate || 0) > 0;
+      const rate = +cfg.tax_rate || 0;
+      const taxable = taxOn ? (cfg.tax_apply === 'before_discount' ? subtotal : net) : net;
+      const tax = taxOn ? Math.round(taxable * rate) / 100 : 0;
+      const feesTotal = Math.round(POS.fees.reduce((s, f) => s + (+f.amount || 0), 0) * 100) / 100;
+      const grand = Math.round((net + tax + feesTotal) * 100) / 100;
+      POS.grand = grand;
+      const discLabel = POS.discType === 'percent'
+        ? `Discount (${Math.max(ds.value, 0)}%)`
+        : 'Discount';
+      let rows = `<div class="trow"><span>Subtotal</span><span>${fmt(subtotal)}</span></div>`;
+      rows += `<div class="trow disc"><span>${discLabel}</span><span>${discount > 0 ? '−' + fmt(discount) : '—'}</span></div>`;
+      if (taxOn) {
+        rows += `<div class="trow muted"><span>Taxable</span><span>${fmt(taxable)}</span></div>`;
+        rows += `<div class="trow"><span>${cfg.tax_name || 'Tax'} (${rate}%)</span><span>${fmt(tax)}</span></div>`;
+      }
+      if (feesTotal > 0) rows += `<div class="trow"><span>Fees</span><span>${fmt(feesTotal)}</span></div>`;
+      rows += `<div class="trow grand"><span>GRAND TOTAL</span><span>${fmt(grand)}</span></div>`;
+      document.getElementById('pos-totals').innerHTML = rows;
+      document.getElementById('pos-err').textContent = ds.error;
+      updateChange();
+    }
+
+    function updateChange() {
+      const recv = parseFloat(document.getElementById('pos-received').value) || 0;
+      const grand = POS.grand || 0;
+      const isCash = document.getElementById('pos-pay').value === 'Cash';
+      const subtotal = Object.values(POS.cart).reduce((sum, it) => sum + it.price * it.qty, 0);
+      const ds = discountState(subtotal);
+      const el = document.getElementById('pos-change');
+      if (isCash) {
+        const ch = recv - grand;
+        el.textContent = 'Change Due: ' + fmt(Math.max(ch, 0));
+        el.style.color = (ch >= 0 && recv > 0) ? 'var(--brand-light)' : 'var(--text-muted)';
+      } else {
+        el.textContent = 'Change Due: —';
+        el.style.color = 'var(--text-muted)';
+      }
+      // Gate the Complete Sale button (allow fee-only sales).
+      const empty = !Object.keys(POS.cart).length && !POS.fees.length;
+      const invalid = empty || grand <= 0 || !!ds.error || (isCash && recv < grand);
+      document.getElementById('pos-complete').disabled = invalid;
+    }
+
+    async function completeSale() {
+      const err = document.getElementById('pos-err');
+      err.textContent = '';
+      const items = Object.keys(POS.cart).map(pid => ({
+        part_id: +pid, quantity: POS.cart[pid].qty, unit_price: POS.cart[pid].price,
+      }));
+      if (!items.length && !POS.fees.length) { err.textContent = 'Nothing to sell — add a product or a fee.'; return; }
+      const subtotal = Object.values(POS.cart).reduce((sum, it) => sum + it.price * it.qty, 0);
+      const ds = discountState(subtotal);
+      if (ds.error) { err.textContent = ds.error; return; }
+      const body = {
+        items,
+        fees: POS.fees.map(f => ({ name: f.name, amount: f.amount })),
+        payment_method: document.getElementById('pos-pay').value,
+        amount_received: parseFloat(document.getElementById('pos-received').value) || 0,
+        discount_type: POS.discType,
+        discount_value: Math.max(ds.value || 0, 0),
+      };
+      const r = await POST('/pos/sales', body);
+      if (!r.ok) { err.textContent = r.error || 'Checkout failed.'; return; }
+      clearCart();
+      document.getElementById('pos-received').value = '0';
+      document.getElementById('pos-disc-value').value = '0';
+      setDiscType('amount');
+      posSearch();
+      toast('Sale ' + r.data.receipt_no + ' completed', 'success');
+      showReceiptSummary(r.data);
+    }
+
+    function showReceiptSummary(d) {
+      const bg = document.createElement('div');
+      bg.className = 'modal-bg open';
+      bg.onclick = e => { if (e.target === bg) bg.remove(); };
+      let extra = '';
+      if (d.discount_total) {
+        const dl = (d.discount_type === 'percent' && d.discount_value)
+          ? `Discount (${d.discount_value}%)` : 'Discount';
+        extra += `<div class="trow"><span>${dl}</span><span>−${fmt(d.discount_total)}</span></div>`;
+      }
+      if (d.tax_enabled) extra += `<div class="trow"><span>${d.tax_name} (${d.tax_rate}%)</span><span>${fmt(d.tax_amount)}</span></div>`;
+      (d.fees || []).forEach(f => { extra += `<div class="trow"><span>${f.name}</span><span>${fmt(f.amount)}</span></div>`; });
+      bg.innerHTML = `<div class="modal" style="max-width:360px">
+        <div class="modal-title">✓ Sale Completed
+          <button class="modal-close" onclick="this.closest('.modal-bg').remove()">✕</button></div>
+        <div style="text-align:center;color:var(--text-muted);margin-bottom:8px">${d.receipt_no}</div>
+        <div class="totals">
+          <div class="trow"><span>Subtotal</span><span>${fmt(d.subtotal)}</span></div>
+          ${extra}
+          <div class="trow grand"><span>TOTAL</span><span>${fmt(d.grand_total)}</span></div>
+          <div class="trow"><span>Paid (${d.payment_method})</span><span>${fmt(d.amount_received)}</span></div>
+          <div class="trow"><span>Change</span><span>${fmt(d.change_due)}</span></div>
+        </div>
+        <button class="btn btn-primary btn-full" style="margin-top:12px" onclick="openReceipt(${d.id})">🖨 Print Receipt</button>
+        <button class="btn btn-secondary btn-full" style="margin-top:8px" onclick="this.closest('.modal-bg').remove()">Close</button>
+        </div>`;
+      document.body.appendChild(bg);
+    }
+
+    function openReceipt(saleId) {
+      window.open('/api/pos/sales/' + saleId + '/receipt', '_blank');
+    }
+
+    async function openRecentSales(dateStr) {
+      if (dateStr === undefined) dateStr = _today();   // default to today
+      const q = dateStr ? `?date_from=${dateStr}&date_to=${dateStr}` : '';
+      const r = await GET('/pos/sales' + q);
+      const rows = r.ok ? r.data : [];
+      const existing = document.getElementById('recent-sales-modal');
+      if (existing) existing.remove();
+      const bg = document.createElement('div');
+      bg.className = 'modal-bg open';
+      bg.id = 'recent-sales-modal';
+      bg.onclick = e => { if (e.target === bg) bg.remove(); };
+      const list = rows.length ? `<table><thead><tr><th>Receipt</th><th>Date</th><th>Qty</th><th>Total</th><th></th></tr></thead>
+        <tbody>${rows.map(s => `<tr>
+          <td>${s.receipt_no}</td><td style="font-size:11px">${fmtDate(s.sale_date)}</td>
+          <td>${s.item_count}</td>
+          <td>${fmt(s.grand_total)}</td>
+          <td><button class="btn btn-sm btn-secondary" onclick="openReceipt(${s.id})">🖨</button> <button class="btn btn-sm btn-danger" onclick="voidSale(${s.id})">Void</button></td>
+        </tr>`).join('')}</tbody></table>`
+        : '<div class="empty"><p>No sales for this date</p></div>';
+      bg.innerHTML = `<div class="modal" style="max-width:560px">
+        <div class="modal-title">Sales History
+          <button class="modal-close" onclick="this.closest('.modal-bg').remove()">✕</button></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+          <span style="font-size:12px;color:var(--text-muted)">Date</span>
+          <input id="sh-date" type="date" value="${dateStr}" style="padding:6px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px">
+          <button class="btn btn-sm btn-secondary" onclick="openRecentSales('')">All</button>
+          <button class="btn btn-sm btn-secondary" onclick="openRecentSales(_today())">Today</button>
+          <button class="btn btn-sm btn-primary" onclick="openRecentSales(document.getElementById('sh-date').value)">Apply</button>
+        </div>
+        <div style="max-height:60vh;overflow:auto">${list}</div></div>`;
+      document.body.appendChild(bg);
+    }
+
+    async function voidSale(id) {
+      if (!confirm('Void this sale? This permanently reverses it and restores the stock.\n\nUse this only for sales entered by mistake — for a genuine customer return, use Returns instead.')) return;
+      const r = await POST(`/pos/sales/${id}/void`);
+      if (!r.ok) { toast(r.error || 'Void failed', 'error'); return; }
+      toast('Sale ' + ((r.data && r.data.receipt_no) || '') + ' voided', 'warning');
+      const keepDate = (document.getElementById('sh-date') || {}).value;
+      const m = document.getElementById('recent-sales-modal');
+      if (m) m.remove();
+      openRecentSales(keepDate);   // keep the current date filter
+      loadDashboard();
+    }
+
+    /* ── Returns ── */
+    const RET_REASONS = {
+      WRONG_SIZE: 'Wrong size', WRONG_COMPAT: 'Wrong compatibility',
+      DAMAGED: 'Damaged', DEFECTIVE: 'Defective', CHANGED_MIND: 'Changed mind',
+      WARRANTY: 'Warranty', OTHER: 'Other'
+    };
+    let _retUnitPrice = 0;
+
+    async function loadReturns() {
+      const el = document.getElementById('returns-table');
+      el.innerHTML = '<div class="spinner">Loading…</div>';
+      const r = await GET('/returns');
+      if (!r.ok) { el.innerHTML = `<div class="empty"><p>${r.error || 'Could not load returns.'}</p></div>`; return; }
+      const rows = r.data || [];
+      if (!rows.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">↩</div><p>No returns yet</p></div>'; return; }
+      el.innerHTML = `<table><thead><tr><th>Date</th><th>Part</th><th>Qty</th><th>Condition</th><th>Reason</th><th>Refund</th><th>Method</th><th>By</th></tr></thead><tbody>
+        ${rows.map(r => `<tr>
+          <td style="font-size:11px">${fmtDate(r.created_at)}</td>
+          <td><div style="font-weight:600;font-size:13px">${r.name}</div><div style="font-size:11px;color:var(--text-muted)">${r.sku}</div></td>
+          <td>${r.quantity}</td><td>${r.condition_label}</td><td>${r.reason}</td>
+          <td>${fmt(r.refund_amount)}</td><td>${r.refund_method}</td><td>${r.user}</td>
+        </tr>`).join('')}</tbody></table>`;
+    }
+
+    let _returnPickMode = 'issue';
+    function openReturnPick(mode) {
+      _returnPickMode = mode;
+      document.getElementById('return-pick-title').textContent =
+        mode === 'issue' ? 'Pick a sale to return' : 'Pick a part to return';
+      document.getElementById('return-pick-search').value = '';
+      openModal('modal-return-pick');
+      returnPickReload();
+    }
+    async function returnPickReload() {
+      const q = document.getElementById('return-pick-search').value.trim();
+      const listEl = document.getElementById('return-pick-list');
+      listEl.innerHTML = '<div class="spinner">Loading…</div>';
+      if (_returnPickMode === 'issue') {
+        const r = await GET('/returns/issues?search=' + encodeURIComponent(q));
+        const rows = r.ok ? r.data : [];
+        listEl.innerHTML = rows.length ? `<table><thead><tr><th>Date</th><th>Receipt</th><th>Part</th><th>Left</th><th></th></tr></thead><tbody>
+          ${rows.map(it => `<tr>
+            <td style="font-size:11px">${fmtDate(it.issued_at)}</td><td>${it.receipt_no || '—'}</td>
+            <td><div style="font-weight:600;font-size:13px">${it.name}</div><div style="font-size:11px;color:var(--text-muted)">${it.sku}</div></td>
+            <td>${it.remaining}/${it.sold_qty}</td>
+            <td><button class="btn btn-sm btn-primary" onclick='pickReturnIssue(${JSON.stringify(it)})'>Select</button></td>
+          </tr>`).join('')}</tbody></table>` : '<div class="empty"><p>No returnable sales</p></div>';
+      } else {
+        const r = await GET('/parts');
+        let rows = r.ok ? r.data : [];
+        if (q) rows = rows.filter(p => `${p.name} ${p.sku}`.toLowerCase().includes(q.toLowerCase()));
+        listEl.innerHTML = rows.length ? `<table><thead><tr><th>Part</th><th>Stock</th><th>Price</th><th></th></tr></thead><tbody>
+          ${rows.slice(0, 100).map(p => `<tr>
+            <td><div style="font-weight:600;font-size:13px">${p.name}</div><div style="font-size:11px;color:var(--text-muted)">${p.sku}</div></td>
+            <td>${p.current_stock}</td><td>${fmt(p.selling_price)}</td>
+            <td><button class="btn btn-sm btn-primary" onclick='pickReturnPart(${JSON.stringify({ id: p.id, sku: p.sku, name: p.name, unit_price: p.selling_price || 0 })})'>Select</button></td>
+          </tr>`).join('')}</tbody></table>` : '<div class="empty"><p>No parts</p></div>';
+      }
+    }
+    function _openReturnForm(row) {
+      document.getElementById('ret-part-id').value = row.part_id;
+      document.getElementById('ret-stock-out-id').value = row.stock_out_id || '';
+      document.getElementById('ret-sale-id').value = row.sale_id || '';
+      _retUnitPrice = row.unit_price || 0;
+      document.getElementById('ret-info').textContent = row.info;
+      document.getElementById('ret-qty').value = 1;
+      document.getElementById('ret-condition').value = 'RESELLABLE';
+      document.getElementById('ret-reason').value = 'WRONG_SIZE';
+      document.getElementById('ret-method').value = 'Cash';
+      document.getElementById('ret-note').value = '';
+      retPreviewRefund();
+      closeModal('modal-return-pick');
+      openModal('modal-return');
+    }
+    function pickReturnIssue(it) {
+      _openReturnForm({
+        part_id: it.part_id, stock_out_id: it.stock_out_id, sale_id: it.sale_id,
+        unit_price: it.unit_price,
+        info: `${it.name} · ${it.sku} — up to ${it.remaining} returnable` +
+          (it.receipt_no ? ` · Receipt ${it.receipt_no}` : ''),
+      });
+    }
+    function pickReturnPart(p) {
+      _openReturnForm({
+        part_id: p.id, stock_out_id: null, sale_id: null, unit_price: p.unit_price,
+        info: `${p.name} · ${p.sku} — no receipt (blind return)`,
+      });
+    }
+    function retPreviewRefund() {
+      const q = parseInt(document.getElementById('ret-qty').value, 10);
+      if (!isNaN(q) && q > 0) {
+        document.getElementById('ret-refund').value = (_retUnitPrice * q).toFixed(2);
+      }
+    }
+    async function submitReturn() {
+      const q = parseInt(document.getElementById('ret-qty').value, 10);
+      if (isNaN(q) || q <= 0) { toast('Enter a valid quantity', 'error'); return; }
+      const body = {
+        part_id: +document.getElementById('ret-part-id').value,
+        stock_out_id: +document.getElementById('ret-stock-out-id').value || null,
+        sale_id: +document.getElementById('ret-sale-id').value || null,
+        quantity: q,
+        condition: document.getElementById('ret-condition').value,
+        reason_code: document.getElementById('ret-reason').value,
+        refund_amount: +document.getElementById('ret-refund').value || 0,
+        refund_method: document.getElementById('ret-method').value,
+        note: document.getElementById('ret-note').value.trim() || null,
+      };
+      const r = await POST('/returns', body);
+      if (!r.ok) { toast(r.error || 'Return failed', 'error'); return; }
+      toast('Return processed');
+      closeModal('modal-return'); loadReturns(); loadDashboard();
+    }
+
+    /* ── POS Settings ── */
+    const _PS_BOOL = ['tax_enabled', 'show_cashier', 'show_sku', 'show_tax_breakdown'];
+    const _PS_TEXT = ['tax_name', 'tax_rate', 'tax_apply', 'store_name', 'store_address',
+      'store_phone', 'receipt_footer', 'paper_size'];
+
+    async function loadPosSettings() {
+      const r = await GET('/pos/settings');
+      if (!r.ok) return;
+      const c = r.data;
+      _PS_BOOL.forEach(k => { const el = document.getElementById('ps-' + k); if (el) el.checked = !!c[k]; });
+      _PS_TEXT.forEach(k => { const el = document.getElementById('ps-' + k); if (el) el.value = c[k] != null ? c[k] : ''; });
+    }
+
+    async function savePosSettings() {
+      const body = {};
+      _PS_BOOL.forEach(k => body[k] = document.getElementById('ps-' + k).checked);
+      _PS_TEXT.forEach(k => {
+        const v = document.getElementById('ps-' + k).value;
+        body[k] = k === 'tax_rate' ? (parseFloat(v) || 0) : v;
+      });
+      const r = await PUT('/pos/settings', body);
+      if (r.ok) { POS.cfg = r.data; toast('POS settings saved', 'success'); }
+      else toast(r.error || 'Save failed', 'error');
+    }
+
+    function settingsTab(tab, btn) {
+      ['categories', 'users', 'suppliers', 'fees', 'reports', 'about'].forEach(t => {
+        const el = document.getElementById('tab-' + t);
+        if (el) el.style.display = t === tab ? '' : 'none';
+      });
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (tab === 'categories') loadCatList();
+      if (tab === 'users') loadUsers();
+      if (tab === 'suppliers') loadSupplierList();
+      if (tab === 'fees') loadFeeTypesAdmin();
+      if (tab === 'reports') loadReports();
+    }
+
+    /* ── Fee types (admin) ── */
+    let _feeTypesAdmin = [];
+    async function loadFeeTypesAdmin() {
+      const r = await GET('/pos/fee-types');
+      _feeTypesAdmin = r.ok ? r.data : [];
+      renderFeeTypesAdmin();
+    }
+    function renderFeeTypesAdmin() {
+      const list = document.getElementById('fee-type-list');
+      const count = document.getElementById('fee-type-count');
+      if (count) {
+        const total = _feeTypesAdmin.length;
+        count.textContent = `${total} ${total === 1 ? 'fee' : 'fees'} saved`;
+      }
+      if (!_feeTypesAdmin.length) {
+        list.innerHTML = '<div class="fee-empty"><b>No fee types yet</b><span>Add one above to make it available at the POS.</span></div>';
+        return;
+      }
+      list.innerHTML = _feeTypesAdmin.map((f, i) => `
+    <div class="fee-item">
+      <div class="fee-info">
+        <div class="fee-name">${f.name}</div>
+        <div class="fee-sub">Default POS charge</div>
+      </div>
+      <span class="fee-amt">${fmt(f.default_amount)}</span>
+      <button class="btn btn-sm btn-danger" onclick="deleteFeeTypeAdmin(${i})">✕</button>
+    </div>`).join('');
+    }
+    async function saveFeeTypesAdmin() {
+      const r = await PUT('/pos/fee-types', { fee_types: _feeTypesAdmin });
+      if (!r.ok) { toast(r.error || 'Save failed', 'error'); return false; }
+      _feeTypesAdmin = r.data;
+      renderFeeTypesAdmin();
+      return true;
+    }
+    async function addFeeTypeAdmin() {
+      const name = document.getElementById('ft-name').value.trim();
+      const amt = Math.round((parseFloat(document.getElementById('ft-amt').value) || 0) * 100) / 100;
+      if (!name) { toast('Name required', 'error'); return; }
+      _feeTypesAdmin.push({ name, default_amount: Math.max(amt, 0) });
+      if (await saveFeeTypesAdmin()) {
+        document.getElementById('ft-name').value = '';
+        document.getElementById('ft-amt').value = '0.00';
+        toast('Fee type added');
+      }
+    }
+    async function deleteFeeTypeAdmin(i) {
+      _feeTypesAdmin.splice(i, 1);
+      if (await saveFeeTypesAdmin()) toast('Fee type removed');
+    }
+    function loadSettings() { loadCatList(); }
+
+
+    /* ── Reports ── */
+    function fmtFileSize(bytes) {
+      bytes = Number(bytes || 0);
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function reportIcon(name) {
+      const ext = (name.split('.').pop() || '').toLowerCase();
+      if (ext === 'xlsx' || ext === 'xls') return '📊';
+      if (ext === 'pdf') return '📄';
+      if (ext === 'csv') return '📋';
+      return '🗂️';
+    }
+
+
+    async function generateReport() {
+      const typeEl = document.getElementById('report-type');
+      const startEl = document.getElementById('report-start-date');
+      const endEl = document.getElementById('report-end-date');
+      const btn = document.getElementById('btn-generate-report');
+      const note = document.getElementById('report-generate-note');
+
+      const report_type = typeEl ? typeEl.value : 'full';
+      const start_date = startEl ? startEl.value : '';
+      const end_date = endEl ? endEl.value : '';
+
+      if (start_date && end_date && start_date > end_date) {
+        toast('From Date cannot be later than To Date', 'error');
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Generating...';
+      }
+      if (note) note.textContent = 'Creating report. Please wait...';
+
+      try {
+        const r = await POST('/reports/generate', { report_type, start_date, end_date });
+        if (!r.ok) {
+          toast(r.error || 'Report generation failed', 'error');
+          if (note) note.textContent = r.error || 'Report generation failed.';
+          return;
+        }
+
+        toast('Report generated successfully');
+        if (note) {
+          note.innerHTML = `Generated: <strong>${r.data.filename}</strong>`;
+        }
+        await loadReports();
+      } catch (exc) {
+        toast('Report generation failed', 'error');
+        if (note) note.textContent = 'Report generation failed.';
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Generate Report';
+        }
+      }
+    }
+
+    async function deleteReport(filename) {
+      if (!filename) return;
+      if (!confirm(`Delete report "${filename}"?`)) return;
+
+      const r = await DEL(`/reports/${encodeURIComponent(filename)}`);
+      if (!r.ok) {
+        toast(r.error || 'Could not delete report', 'error');
+        return;
+      }
+
+      toast('Report deleted', 'warning');
+      await loadReports();
+    }
+
+    async function loadReports() {
+      // Default the report "From Date" to today so the user doesn't have to type it.
+      const sd = document.getElementById('report-start-date');
+      if (sd && !sd.value) sd.value = _today();
+
+      const el = document.getElementById('report-list');
+      if (!el) return;
+      el.innerHTML = '<div class="spinner">Loading reports…</div>';
+
+      const r = await GET('/reports');
+      if (!r.ok) {
+        el.innerHTML = `<div class="empty"><p>${r.error || 'Could not load reports.'}</p></div>`;
+        return;
+      }
+
+      const reports = r.data || [];
+      if (!reports.length) {
+        el.innerHTML = '<div class="empty"><div class="empty-icon">📁</div><p>No generated reports found yet.</p></div>';
+        return;
+      }
+
+      el.innerHTML = reports.map(f => `
+        <div class="report-card-row">
+          <div class="report-file-name">${reportIcon(f.name)} ${f.name}</div>
+          <div class="report-file-meta">${f.ext.toUpperCase()} report · ${fmtFileSize(f.size)} · ${fmtDate(f.modified_at)}</div>
+          <div class="report-actions">
+            <a class="btn btn-sm btn-primary" href="/api/reports/download/${encodeURIComponent(f.name)}" download>Download</a>
+            <button class="btn btn-sm btn-danger" onclick='deleteReport(${JSON.stringify(f.name)})'>Delete</button>
+          </div>
+        </div>`).join('');
+    }
+
+    /* ── Users ── */
+    async function loadUsers() {
+      const r = await GET('/users');
+      if (!r.ok) { document.getElementById('user-list').innerHTML = '<div class="empty"><p>Admin access required</p></div>'; return; }
+      document.getElementById('user-list').innerHTML = `<table><thead><tr><th>Username</th><th>Name</th><th>Role</th><th></th></tr></thead><tbody>
+    ${r.data.map(u => `<tr><td>${u.username}</td><td>${u.full_name}</td>
+      <td><span class="badge ${u.role === 'admin' ? 'badge-low' : 'badge-ok'}">${u.role}</span></td>
+      <td>${u.is_active ? `<button class="btn btn-sm btn-secondary" onclick='editUser(${JSON.stringify(u)})'>Edit</button>` : '<span style="color:var(--text-muted);font-size:12px">Inactive</span>'}</td></tr>`).join('')}
+  </tbody></table>`;
+    }
+    function openUserModal() {
+      document.getElementById('user-edit-id').value = '';
+      ['user-username', 'user-fullname', 'user-password'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('user-role').value = 'staff';
+      document.getElementById('user-username').disabled = false;
+      document.getElementById('pass-hint').style.display = 'none';
+      document.getElementById('modal-user-title').textContent = 'Add User';
+      openModal('modal-user');
+    }
+    function editUser(u) {
+      document.getElementById('user-edit-id').value = u.id;
+      document.getElementById('user-username').value = u.username;
+      document.getElementById('user-username').disabled = true;
+      document.getElementById('user-fullname').value = u.full_name;
+      document.getElementById('user-role').value = u.role;
+      document.getElementById('user-password').value = '';
+      document.getElementById('pass-hint').style.display = '';
+      document.getElementById('modal-user-title').textContent = 'Edit User';
+      openModal('modal-user');
+    }
+    async function saveUser() {
+      const id = document.getElementById('user-edit-id').value;
+      const body = {
+        username: document.getElementById('user-username').value.trim(),
+        full_name: document.getElementById('user-fullname').value.trim(),
+        role: document.getElementById('user-role').value,
+        password: document.getElementById('user-password').value
+      };
+      if (!body.full_name) { toast('Full name required', 'error'); return; }
+      if (id) {
+        const upd = { full_name: body.full_name, role: body.role };
+        if (body.password) upd.password = body.password;
+        const r = await PUT(`/users/${id}`, upd);
+        if (!r.ok) { toast(r.error, 'error'); return; }
+      } else {
+        if (!body.username) { toast('Username required', 'error'); return; }
+        if (!body.password) { toast('Password required', 'error'); return; }
+        const r = await POST('/users', body);
+        if (!r.ok) { toast(r.error, 'error'); return; }
+      }
+      toast('User saved'); closeModal('modal-user'); loadUsers();
+    }
+
+    /* ── Suppliers ── */
+    async function loadSuppliers() { const r = await GET('/suppliers'); if (!r.ok) return; S.suppliers = r.data; }
+    async function loadSupplierList() {
+      const r = await GET('/suppliers');
+      if (!r.ok) return;
+      S.suppliers = r.data;
+      const el = document.getElementById('supplier-list');
+      if (!r.data.length) { el.innerHTML = '<div class="empty"><p>No suppliers yet</p></div>'; return; }
+      el.innerHTML = `<table><thead><tr><th>Name</th><th>Contact</th><th>Phone</th><th>Actions</th></tr></thead><tbody>
+    ${r.data.map(s => `<tr>
+      <td style="font-weight:600">${s.name}</td>
+      <td style="font-size:13px">${s.contact_name || '—'}</td>
+      <td style="font-size:13px">${s.phone || '—'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sm btn-secondary" onclick='editSupplier(${JSON.stringify(s)})'>Edit</button>
+        <button class="btn btn-sm btn-danger" onclick='deleteSupplier(${s.id}, ${JSON.stringify(s.name)})'>Delete</button>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+    }
+    function openSupplierModal() {
+      document.getElementById('supplier-id').value = '';
+      ['sup-name', 'sup-contact', 'sup-phone', 'sup-email', 'sup-address', 'sup-notes'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('modal-supplier-title').textContent = 'Add Supplier';
+      openModal('modal-supplier');
+    }
+    function editSupplier(s) {
+      document.getElementById('supplier-id').value = s.id;
+      document.getElementById('sup-name').value = s.name || '';
+      document.getElementById('sup-contact').value = s.contact_name || '';
+      document.getElementById('sup-phone').value = s.phone || '';
+      document.getElementById('sup-email').value = s.email || '';
+      document.getElementById('sup-address').value = s.address || '';
+      document.getElementById('sup-notes').value = s.notes || '';
+      document.getElementById('modal-supplier-title').textContent = 'Edit Supplier';
+      openModal('modal-supplier');
+    }
+    async function deleteSupplier(id, name) {
+      if (!id) return;
+      if (!confirm(`Delete supplier "${name}"?`)) return;
+
+      const r = await DEL(`/suppliers/${id}`);
+      if (!r.ok) {
+        toast(r.error || 'Could not delete supplier', 'error');
+        return;
+      }
+
+      toast('Supplier deleted', 'warning');
+      await loadSuppliers();
+      loadSupplierList();
+    }
+
+    async function saveSupplier() {
+      const id = document.getElementById('supplier-id').value;
+      const body = {
+        name: document.getElementById('sup-name').value.trim(),
+        contact_name: document.getElementById('sup-contact').value.trim() || null,
+        phone: document.getElementById('sup-phone').value.trim() || null,
+        email: document.getElementById('sup-email').value.trim() || null,
+        address: document.getElementById('sup-address').value.trim() || null,
+        notes: document.getElementById('sup-notes').value.trim() || null
+      };
+      if (!body.name) { toast('Name required', 'error'); return; }
+      const r = id ? await PUT(`/suppliers/${id}`, body) : await POST('/suppliers', body);
+      if (!r.ok) { toast(r.error, 'error'); return; }
+      toast('Supplier saved'); closeModal('modal-supplier'); await loadSuppliers(); loadSupplierList();
+    }
+
+    /* ── Startup ── */
+    (async () => {
+      const r = await GET('/auth/me');
+      if (r.ok) {
+        S.user = r.data.username; S.isAdmin = r.data.is_admin;
+        document.getElementById('user-badge').textContent = r.data.full_name;
+        document.getElementById('login-screen').classList.remove('open');
+        document.getElementById('app').style.display = 'flex';
+        const btn = document.getElementById('login-submit');
+        if (btn) { btn.disabled = false; btn.classList.remove('success'); btn.textContent = 'Sign In'; }
+        loadAll();
+      }
+    })();
+  </script>
+</body>
+
+</html>
